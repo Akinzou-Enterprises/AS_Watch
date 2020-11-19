@@ -4,27 +4,33 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_ILI9341.h>
 #include "AS_WatchV1.h"
-#include "SettingsIcon.c"
+#include "Icons.c"
 #include <Adafruit_BME280.h>
 #include <Arduino-MAX17055_Driver.h>
+#include <TouchScreen.h>
 
 MAX17055 bat;
 Adafruit_BME280 bme;
 Adafruit_ILI9341 tft = Adafruit_ILI9341(TFT_CS, TFT_DC, TFT_RST);
+TouchScreen ts = TouchScreen(XP, YP, XM, YM, 300);
 
-
-int hall, temp, pressure, humidity, altidute, soc, pressDuration, ChProcessStat;
+int hall, temp, pressure, humidity, altidute, soc, pressDuration, ChProcessStat, capicity;
 int SEALEVELPRESSURE_HPA = 1013;
 int lastState = LOW;
 int currentState;
-int pressedTime  = 0;
-int releasedTime = 0;
-float voltage;
+long long int pressedTime  = 0;
+long long int releasedTime = 0;
+float voltage, tte;
+bool menu = true;
+bool settings = false;
 
 void ActualizeSensors(void * parameter)
 {
   for(;;){
     soc = bat.getSOC();
+    capicity = bat.getCapacity();
+    voltage = bat.getInstantaneousVoltage();
+    tte = bat.getTimeToEmpty();
     hall = hallRead();   
     temp = bme.readTemperature();
     pressure = bme.readPressure();
@@ -59,11 +65,134 @@ void CheckButton(void * parameter)
   }
 }
 
+void ShowMenu()
+{
+  if(menu == true)
+  {
+    tft.fillRect(0, 0, 60, 34, ILI9341_BLACK);         //Hall
+    tft.fillRect(70, 40, 180, 55, ILI9341_BLACK);      //Hour
+    tft.fillRect(250, 0, 320, 17, ILI9341_BLACK);      //battery %
+    tft.fillRect(230, 220, 320, 240, ILI9341_BLACK);   //Accel
+    tft.fillRect(0, 180, 140, 230, ILI9341_BLACK);     //heigh & temp & pressure & humidity
+
+
+    tft.setCursor(70, 45);      //Hour
+    tft.setTextSize(6);
+    tft.println("14:10"); 
+
+    if(soc == 100)
+    {
+      tft.setTextSize(2);         //Battery %
+      tft.setCursor(270, 0);
+      tft.print(soc);
+      tft.println("%");
+    }
+
+    else
+    {
+      tft.setTextSize(2);
+      tft.setCursor(280, 0);
+      tft.print(soc);
+      tft.println("%");
+    }
+    tft.drawRGBBitmap(0, 0, SettingsIcon, 30, 30);
+
+    tft.setTextSize(2);
+    tft.setCursor(230, 225);    //Accel
+    tft.print("16");
+    tft.println("m/s^2");
+
+
+    tft.setTextSize(2);        //altidute
+    tft.setCursor(0, 195); 
+    tft.print(altidute);
+    tft.println("m a.s.l");
+
+    tft.setTextSize(2);        //Pressure
+    tft.setCursor(0, 225);
+    tft.print(pressure/100);
+    tft.println("hPa");
+
+
+
+    if(!digitalRead(ChProcess)) //External green dot signaling the charging process 
+    {
+      tft.fillCircle(260, 5, 5, ILI9341_GREEN);
+    }
+
+    delay(300);
+  }
+}
+
+void ShowSettings()
+{
+  if(settings == true)
+  {
+    tft.drawRGBBitmap(0, 0, ReturnIcon, 30, 30);
+
+    tft.fillRect(40, 40, 270, 170, ILI9341_BLACK);
+
+    tft.setTextSize(2);        //Humidity
+    tft.setCursor(40, 40); 
+    tft.print("Humidity: ");
+    tft.print(humidity);
+    tft.println("%");
+
+    tft.setTextSize(2);        //Temp
+    tft.setCursor(40, 70);
+    tft.print("Temp: "); 
+    tft.print(temp);
+    tft.setTextSize(1);
+    tft.print("*");
+    tft.setTextSize(2);
+    tft.println("C");
+
+    tft.setTextSize(2);         //Hall
+    tft.setCursor(40, 100);
+    tft.print("Hall: ");
+    tft.print(hall);
+    tft.setTextSize(1);
+    tft.println("*");
+
+    tft.setTextSize(2);        //Humidity
+    tft.setCursor(40, 130); 
+    tft.print("Voltage: ");
+    tft.print(voltage);
+    tft.println("V");
+
+    tft.setTextSize(2);        //Humidity
+    tft.setCursor(40, 160); 
+    tft.print("Capacity: ");
+    tft.print(capicity);
+    tft.println("mAh");
+
+    if(!digitalRead(ChProcess))
+    {
+      tft.setTextSize(2);        //Humidity
+      tft.setCursor(40, 190); 
+      tft.println("Charging");
+    }
+    else
+    {
+      tft.setTextSize(2);        //Humidity
+      tft.setCursor(40, 190); 
+      tft.print("Time to empty: ");
+      tft.print(tte);
+      tft.println("h");
+    }
+
+    tft.setTextSize(2);        //Humidity
+    tft.setCursor(90, 220); 
+    tft.print("Go to sleep");
+    
+    delay(200);
+  }
+}
+
 void setup() 
 {
   bat.setCapacity(1200);
   bat.setResistSensor(0.01);
-
   Serial.begin(9600);
   Serial.println("WakeUp");
   bme.begin();
@@ -79,7 +208,7 @@ void setup()
     (
     CheckButton,    // Function that should be called
     "CheckButton",   // Name of the task (for debugging)
-    1500,            // Stack size (bytes)
+    5000,            // Stack size (bytes)
     NULL,            // Parameter to pass
     2,               // Task priority
     NULL             // Task handle
@@ -89,7 +218,7 @@ void setup()
     (
     ActualizeSensors,   
     "ActualizeSensors",   
-    3000,            
+    5000,            
     NULL,            
     1,               
     NULL             
@@ -101,80 +230,7 @@ void setup()
 
 void loop() 
 {
-  Serial.print("Voltage: ");
-  voltage = bat.getInstantaneousVoltage();
-  Serial.println(voltage);
-  Serial.println(temp);
-  Serial.println(soc);
-
-  tft.fillRect(0, 0, 60, 34, ILI9341_BLACK);         //Hall
-  tft.fillRect(70, 40, 180, 55, ILI9341_BLACK);      //Hour
-  tft.fillRect(250, 0, 320, 17, ILI9341_BLACK);      //battery %
-  tft.fillRect(230, 220, 320, 240, ILI9341_BLACK);   //Accel
-  tft.fillRect(0, 180, 140, 230, ILI9341_BLACK);     //heigh & temp & pressure & humidity
-
-
-  tft.setCursor(70, 45);      //Hour
-  tft.setTextSize(6);
-  tft.println("14:10"); 
-
-  if(soc == 100)
-  {
-    tft.setTextSize(2);         //Battery %
-    tft.setCursor(270, 0);
-    tft.print(soc);
-    tft.println("%");
-  }
-
-  else
-  {
-    tft.setTextSize(2);
-    tft.setCursor(280, 0);
-    tft.print(soc);
-    tft.println("%");
-  }
-  tft.drawRGBBitmap(0, 0, SettingsIcon, 30, 30);
-
-  tft.setTextSize(2);
-  tft.setCursor(230, 225);    //Accel
-  tft.print("16");
-  tft.println("m/s^2");
-
-  /*tft.setTextSize(2);         //Hall
-  tft.setCursor(0, 0);
-  tft.print(hall);
-  tft.setTextSize(1);
-  tft.println("*");*/
-
-  tft.setTextSize(2);        //altidute
-  tft.setCursor(0, 195); 
-  tft.print(altidute);
-  tft.println("m a.s.l");
-
-  /*tft.setTextSize(2);        //Temp
-  tft.setCursor(0, 165); 
-  tft.print(temp);
-  tft.setTextSize(1);
-  tft.print("*");
-  tft.setTextSize(2);
-  tft.println("C");*/
-
-  tft.setTextSize(2);        //Pressure
-  tft.setCursor(0, 225);
-  tft.print(pressure/100);
-  tft.println("hPa");
-
-  /*tft.setTextSize(2);        //Humidity
-  tft.setCursor(0, 135); 
-  tft.print(humidity);
-  tft.println("%");*/
-
-
-  if(!digitalRead(ChProcess)) //External green dot signaling the charging process 
-  {
-    tft.fillCircle(260, 5, 5, ILI9341_GREEN);
-  }
+  ShowMenu();
+  ShowSettings();
   
-
-  delay(500);
 }
