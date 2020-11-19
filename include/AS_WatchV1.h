@@ -18,4 +18,9 @@
 #define PanicButton 26
 #define ChProcess 25
 
+#define XP 34
+#define XM 36
+#define YP 35
+#define YM 39
+
 #define SPIspeed 40000000L
