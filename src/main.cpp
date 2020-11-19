@@ -6,9 +6,7 @@
 #include "AS_WatchV1.h"
 #include "SettingsIcon.c"
 #include <Adafruit_BME280.h>
-#include <Arduino-MAX17055.h>
-#include <Adafruit_SPIFlash.h> 
-#include <Adafruit_ImageReader.h>
+#include <Arduino-MAX17055_Driver.h>
 
 MAX17055 bat;
 Adafruit_BME280 bme;
