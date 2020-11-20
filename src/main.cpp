@@ -23,6 +23,7 @@ long long int releasedTime = 0;
 float voltage, tte;
 bool menu = true;
 bool settings = false;
+bool LCD = false;
 
 void ActualizeSensors(void * parameter)
 {
@@ -54,14 +55,30 @@ void CheckButton(void * parameter)
       releasedTime = millis();
       pressDuration = releasedTime - pressedTime;
       Serial.println(pressDuration);
-        if( pressDuration >= 3000 && pressDuration <= 4000 )
+
+      if(pressDuration <= 1000)
+      {
+        if(LCD)
         {
-          Serial.println("Go to deep sleep");
-          esp_deep_sleep_start();
+          digitalWrite(LCD_Switch, LOW);
+          LCD = false;
         }
+        else
+        {
+          digitalWrite(LCD_Switch, HIGH);
+          LCD = true;
+        }
+        
+      }
+
+      if( pressDuration >= 3000 && pressDuration <= 4000 )
+      {
+        Serial.println("Go to deep sleep");
+        esp_deep_sleep_start();
+      }
     }
     lastState = currentState;
-    vTaskDelay(200 / portTICK_PERIOD_MS);
+    vTaskDelay(80 / portTICK_PERIOD_MS);
   }
 }
 
@@ -199,8 +216,9 @@ void setup()
   pinMode(ChProcess, INPUT);
   pinMode(PanicButton, INPUT);
   pinMode(LCD_Switch, OUTPUT);
-  digitalWrite(LCD_Switch, HIGH);
+  digitalWrite(LCD_Switch, LOW);
   tft.begin();
+  tft.setSPISpeed(25000000);
   tft.fillScreen(ILI9341_BLACK);
   tft.setRotation(3);
 
