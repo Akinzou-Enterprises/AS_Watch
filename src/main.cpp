@@ -3,16 +3,23 @@
 #include <SPI.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_ILI9341.h>
-#include "AS_WatchV1.h"
+#include "AS_WatchV1.h" //Include pins file!
+#include <stdint.h>
 #include "Icons.c"
 #include <Adafruit_BME280.h>
 #include <Arduino-MAX17055_Driver.h>
+#include <list>
 #include <TouchScreen.h>
+#include <MAX31341.h>
+#include <IRremote.h>
 
+IRrecv irrecv(IR_PIN);
+decode_results results;
 MAX17055 bat;
 Adafruit_BME280 bme;
 Adafruit_ILI9341 tft = Adafruit_ILI9341(TFT_CS, TFT_DC, TFT_RST);
-TouchScreen ts = TouchScreen(XP, YP, XM, YM, 300);
+TouchScreen ts = TouchScreen(XM, YM, XP, YP, 380);
+MAX31341 rtc(true);
 
 int hall, temp, pressure, humidity, altidute, soc, pressDuration, ChProcessStat, capicity;
 int SEALEVELPRESSURE_HPA = 1013;
@@ -21,9 +28,9 @@ int currentState;
 long long int pressedTime  = 0;
 long long int releasedTime = 0;
 float voltage, tte;
-bool menu = true;
-bool settings = false;
+int toShow = 0;
 bool LCD = false;
+int hour,x;
 
 void ActualizeSensors(void * parameter)
 {
@@ -84,7 +91,7 @@ void CheckButton(void * parameter)
 
 void ShowMenu()
 {
-  if(menu == true)
+  if(toShow == 0)
   {
     tft.fillRect(0, 0, 60, 34, ILI9341_BLACK);         //Hall
     tft.fillRect(70, 40, 180, 55, ILI9341_BLACK);      //Hour
@@ -143,7 +150,7 @@ void ShowMenu()
 
 void ShowSettings()
 {
-  if(settings == true)
+  if(toShow == 1)
   {
     tft.drawRGBBitmap(0, 0, ReturnIcon, 30, 30);
 
@@ -208,6 +215,11 @@ void ShowSettings()
 
 void setup() 
 {
+  irrecv.enableIRIn();
+  irrecv.blink13(true);
+  analogReadResolution(10);
+  tft.begin();
+  tft.invertDisplay(ILI9341_INVOFF);
   bat.setCapacity(1200);
   bat.setResistSensor(0.01);
   Serial.begin(9600);
@@ -217,7 +229,6 @@ void setup()
   pinMode(PanicButton, INPUT);
   pinMode(LCD_Switch, OUTPUT);
   digitalWrite(LCD_Switch, LOW);
-  tft.begin();
   tft.setSPISpeed(25000000);
   tft.fillScreen(ILI9341_BLACK);
   tft.setRotation(3);
@@ -243,12 +254,31 @@ void setup()
     );
 
   esp_sleep_enable_ext0_wakeup(GPIO_NUM_26, 0);
-  
+
+  hour = rtc.GetSeconds();
+  Serial.println(hour);
 }
 
 void loop() 
-{
+{ 
   ShowMenu();
   ShowSettings();
-  
+  if (irrecv.decode(&results))
+  {
+      Serial.println(results.value, HEX);
+      delay(10);
+
+      switch (results.value)
+      {
+        case 0x76A77416:
+          Serial.println("XD");
+          break;
+
+        case 0x69893291:
+        Serial.println("LOL");
+
+      }
+      irrecv.resume();
+  }
+
 }

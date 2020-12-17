@@ -17,6 +17,7 @@
 #define LCD_Switch 2
 #define PanicButton 26
 #define ChProcess 25
+#define IR_PIN 16
 
 #define XP 34
 #define XM 36
