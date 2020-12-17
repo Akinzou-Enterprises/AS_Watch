@@ -142,7 +142,7 @@ void ShowMenu()
     
     if (digitalRead(ChProcess))
     {
-      tft.drawRGBBitmap(280, 0, BatteryCharging, 37, 20);
+      tft.drawRGBBitmap(280, 0, Battery, 37, 20);
     
       tft.setTextSize(2);        
       if(soc < 100)
