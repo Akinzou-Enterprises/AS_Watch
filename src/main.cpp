@@ -10,8 +10,8 @@
 #include <Arduino-MAX17055_Driver.h>
 #include <list>
 #include <TouchScreen.h>
-#include <MAX31341.h>
 #include <IRremote.h>
+
 
 IRrecv irrecv(IR_PIN);
 decode_results results;
@@ -19,7 +19,6 @@ MAX17055 bat;
 Adafruit_BME280 bme;
 Adafruit_ILI9341 tft = Adafruit_ILI9341(TFT_CS, TFT_DC, TFT_RST);
 TouchScreen ts = TouchScreen(XM, YM, XP, YP, 380);
-MAX31341 rtc(true);
 
 int hall, temp, pressure, humidity, altidute, soc, pressDuration, ChProcessStat, capicity;
 int SEALEVELPRESSURE_HPA = 1013;
@@ -43,7 +42,10 @@ void ActualizeSensors(void * parameter)
     temp = bme.readTemperature();
     pressure = bme.readPressure();
     humidity = bme.readHumidity();
-    altidute = bme.readAltitude(SEALEVELPRESSURE_HPA);
+    if(bme.readAltitude(SEALEVELPRESSURE_HPA) > -9999)
+    {
+      altidute = bme.readAltitude(SEALEVELPRESSURE_HPA);
+    }
     vTaskDelay(750 / portTICK_PERIOD_MS);
   }
 }
@@ -93,10 +95,11 @@ void ShowMenu()
 {
   if(toShow == 0)
   {
+    int BattColor;
     tft.fillRect(0, 0, 60, 34, ILI9341_BLACK);         //Hall
     tft.fillRect(70, 40, 180, 55, ILI9341_BLACK);      //Hour
-    tft.fillRect(250, 0, 320, 17, ILI9341_BLACK);      //battery %
-    tft.fillRect(230, 220, 320, 240, ILI9341_BLACK);   //Accel
+    tft.fillRect(230, 0, 100, 30, ILI9341_BLACK);      //battery %
+    tft.fillRect(230, 220, 90, 240, ILI9341_BLACK);   //Accel
     tft.fillRect(0, 180, 140, 230, ILI9341_BLACK);     //heigh & temp & pressure & humidity
 
 
@@ -104,21 +107,6 @@ void ShowMenu()
     tft.setTextSize(6);
     tft.println("14:10"); 
 
-    if(soc == 100)
-    {
-      tft.setTextSize(2);         //Battery %
-      tft.setCursor(270, 0);
-      tft.print(soc);
-      tft.println("%");
-    }
-
-    else
-    {
-      tft.setTextSize(2);
-      tft.setCursor(280, 0);
-      tft.print(soc);
-      tft.println("%");
-    }
     tft.drawRGBBitmap(0, 0, SettingsIcon, 30, 30);
 
     tft.setTextSize(2);
@@ -137,14 +125,57 @@ void ShowMenu()
     tft.print(pressure/100);
     tft.println("hPa");
 
-
-
-    if(!digitalRead(ChProcess)) //External green dot signaling the charging process 
+    if(soc<100 & soc>51)
     {
-      tft.fillCircle(260, 5, 5, ILI9341_GREEN);
+      BattColor = ILI9341_GREEN;
+    }
+  
+    else if (soc<51 & soc>21)
+    {
+      BattColor = ILI9341_YELLOW;
     }
 
-    delay(300);
+    else
+    {
+      BattColor = ILI9341_RED;
+    }
+    
+    if (digitalRead(ChProcess))
+    {
+      tft.drawRGBBitmap(280, 0, BatteryCharging, 37, 20);
+    
+      tft.setTextSize(2);        
+      if(soc < 100)
+      {
+      tft.setCursor(240, 3);
+      }
+      else
+      {
+        tft.setCursor(230, 3);
+      }
+      tft.print(soc);
+      tft.println("%");
+    }
+    
+    else
+    {
+      tft.drawRGBBitmap(280, 0, BatteryCharging, 37, 20);
+    
+      tft.setTextSize(2);        
+      if(soc < 100)
+      {
+      tft.setCursor(240, 3);
+      }
+      else
+      {
+        tft.setCursor(230, 3);
+      }
+      tft.print(soc);
+      tft.println("%");
+    }
+
+    tft.fillRect(282, 2, 31*soc/100, 16, BattColor);
+    delay(50);
   }
 }
 
@@ -255,8 +286,6 @@ void setup()
 
   esp_sleep_enable_ext0_wakeup(GPIO_NUM_26, 0);
 
-  hour = rtc.GetSeconds();
-  Serial.println(hour);
 }
 
 void loop() 
