@@ -11,14 +11,17 @@
 #include <list>
 #include <TouchScreen.h>
 #include <IRremote.h>
+#include <SdFat.h>
 
-
+SdFat32 sd;
+File32 file;
 IRrecv irrecv(IR_PIN);
 decode_results results;
 MAX17055 bat;
 Adafruit_BME280 bme;
 Adafruit_ILI9341 tft = Adafruit_ILI9341(TFT_CS, TFT_DC, TFT_RST);
 TouchScreen ts = TouchScreen(XM, YM, XP, YP, 380);
+SoftSpiDriver<SOFT_MISO_PIN, SOFT_MOSI_PIN, SOFT_SCK_PIN> softSpi;
 
 int hall, temp, pressure, humidity, altidute, soc, pressDuration, ChProcessStat, capicity;
 int SEALEVELPRESSURE_HPA = 1013;
@@ -33,7 +36,8 @@ int hour,x;
 
 void ActualizeSensors(void * parameter)
 {
-  for(;;){
+  for(;;)
+  {
     soc = bat.getSOC();
     capicity = bat.getCapacity();
     voltage = bat.getInstantaneousVoltage();
@@ -50,10 +54,30 @@ void ActualizeSensors(void * parameter)
   }
 }
 
+void CheckSD(void * parameter)
+{
+  for(;;)
+  {
+    Serial.println("Checking card");
+    if (sd.begin(SD_CONFIG)) 
+    {
+      Serial.println("Card in");
+      if (file.open("SoftSPI.txt", O_RDWR | O_CREAT)) 
+      {
+        Serial.println("Writing to file");
+        file.println("This line was printed using software SPI.");
+        file.rewind();
+        file.close();
+      }
+    }
+    vTaskDelay(500 / portTICK_PERIOD_MS);
+  }
+}
 
 void CheckButton(void * parameter)
 {
-  for(;;){
+  for(;;)
+  {
     currentState = digitalRead(PanicButton);
     if(lastState == HIGH && currentState == LOW)
     {
@@ -271,6 +295,17 @@ void setup()
     5000,            // Stack size (bytes)
     NULL,            // Parameter to pass
     2,               // Task priority
+    NULL             // Task handle
+    );
+
+
+  xTaskCreate
+    (
+    CheckSD,    // Function that should be called
+    "CheckSD",   // Name of the task (for debugging)
+    2000,            // Stack size (bytes)
+    NULL,            // Parameter to pass
+    1,               // Task priority
     NULL             // Task handle
     );
 

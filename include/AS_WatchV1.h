@@ -9,8 +9,13 @@
 //static const uint8_t MISO  = 17;
 //static const uint8_t SCK   = 14;
 
+const uint8_t SD_CS_PIN = 5;
+const uint8_t SOFT_MISO_PIN = 19;
+const uint8_t SOFT_MOSI_PIN = 23;
+const uint8_t SOFT_SCK_PIN  = 18;
 
-
+#define SD_FAT_TYPE 1
+#define SD_CONFIG SdSpiConfig(SD_CS_PIN, DEDICATED_SPI, SD_SCK_MHZ(0), &softSpi)
 #define TFT_DC 4
 #define TFT_CS 15
 #define TFT_RST 27
