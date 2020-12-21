@@ -23,6 +23,7 @@ Adafruit_ILI9341 tft = Adafruit_ILI9341(TFT_CS, TFT_DC, TFT_RST);
 TouchScreen ts = TouchScreen(XM, YM, XP, YP, 380);
 SoftSpiDriver<SOFT_MISO_PIN, SOFT_MOSI_PIN, SOFT_SCK_PIN> softSpi;
 
+int column, row = 0;
 int hall, temp, pressure, humidity, altidute, soc, pressDuration, ChProcessStat, capicity;
 int SEALEVELPRESSURE_HPA = 1013;
 int lastState = LOW;
@@ -30,10 +31,15 @@ int currentState;
 long long int pressedTime  = 0;
 long long int releasedTime = 0;
 float voltage, tte;
-int toShow = 0;
+int toShow = 2;
 bool LCD = false;
+bool SD;
 int hour,x;
 
+
+
+
+//Tasks
 void ActualizeSensors(void * parameter)
 {
   for(;;)
@@ -62,14 +68,14 @@ void CheckSD(void * parameter)
     if (sd.begin(SD_CONFIG)) 
     {
       Serial.println("Card in");
-      if (file.open("SoftSPI.txt", O_RDWR | O_CREAT)) 
-      {
-        Serial.println("Writing to file");
-        file.println("This line was printed using software SPI.");
-        file.rewind();
-        file.close();
-      }
+      SD = true;
     }
+
+    else
+    {
+      SD = false;
+    }
+    
     vTaskDelay(500 / portTICK_PERIOD_MS);
   }
 }
@@ -115,6 +121,10 @@ void CheckButton(void * parameter)
   }
 }
 
+
+
+
+//LCD showing
 void ShowMenu()
 {
   if(toShow == 0)
@@ -268,6 +278,37 @@ void ShowSettings()
   }
 }
 
+void ShowFromSD()
+{
+  if(toShow == 2 & SD)
+  {
+    if (file.open("SoftSPI.txt", O_RDWR | O_CREAT)) 
+    {
+      while (file.available()) 
+      {
+        if(column <= 320 & row <= 240)
+        {
+          tft.setTextSize(2);
+          char readByte = file.read();
+          tft.setCursor(column, row); 
+          column+=12;
+          if(column >= 312)
+          {
+            row += 16;
+            column = 0;
+          }
+          tft.print(readByte);
+        }
+      }
+      file.close();
+    }
+  }
+}
+
+
+
+
+//Arduino code
 void setup() 
 {
   irrecv.enableIRIn();
@@ -327,6 +368,7 @@ void loop()
 { 
   ShowMenu();
   ShowSettings();
+  ShowFromSD();
   if (irrecv.decode(&results))
   {
       Serial.println(results.value, HEX);
@@ -344,5 +386,5 @@ void loop()
       }
       irrecv.resume();
   }
-
 }
+
