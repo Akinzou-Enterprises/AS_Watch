@@ -34,7 +34,7 @@ float voltage, tte;
 int toShow = 2;
 bool LCD = false;
 bool SD;
-int hour,x;
+int CurrentCharacter = 0;
 
 
 
@@ -65,18 +65,58 @@ void CheckSD(void * parameter)
   for(;;)
   {
     Serial.println("Checking card");
-    if (sd.begin(SD_CONFIG)) 
+    if (sd.begin(SD_CONFIG) & !SD) 
     {
       Serial.println("Card in");
       SD = true;
+      if (file.open("SoftSPI.txt", O_RDWR | O_CREAT)) 
+        {
+          CurrentCharacter = 0;
+          while (file.available())
+          {
+            char character = file.read();
+            Serial.println(character);
+            CurrentCharacter+=1;
+          }
+          file.close(); 
+        }
     }
-
-    else
+    else if (!sd.begin(SD_CONFIG))
     {
+      CurrentCharacter = 0;
       SD = false;
     }
     
     vTaskDelay(500 / portTICK_PERIOD_MS);
+  }
+}
+
+void CheckIR(void * parameter)
+{
+  for(;;)
+  {
+    if (irrecv.decode(&results))
+    {
+        Serial.println(results.value, HEX);
+        delay(10);
+
+        switch (results.value)
+        {
+          case 0x76A77416:
+            Serial.println("XD");
+            break;
+
+          case 0x69893291:
+            tft.fillScreen(ILI9341_BLACK);
+            row = 0;
+            column = 0;
+            Serial.println("lol");
+            break;
+
+        }
+        irrecv.resume();
+    }  
+    vTaskDelay(80 / portTICK_PERIOD_MS);
   }
 }
 
@@ -281,27 +321,26 @@ void ShowSettings()
 void ShowFromSD()
 {
   if(toShow == 2 & SD)
-  {
-    if (file.open("SoftSPI.txt", O_RDWR | O_CREAT)) 
+  { 
     {
-      while (file.available()) 
+
+      delay(5);
+      if(column <= 320 & row <= 240)
       {
-        if(column <= 320 & row <= 240)
+        tft.setTextSize(2);
+        char readByte = file.read();
+        tft.setCursor(column, row); 
+        column+=13;
+        if(column >= 312)
         {
-          tft.setTextSize(2);
-          char readByte = file.read();
-          tft.setCursor(column, row); 
-          column+=12;
-          if(column >= 312)
-          {
-            row += 16;
-            column = 0;
-          }
-          tft.print(readByte);
+          row += 16;
+          column = 0;
         }
+        tft.print(readByte);
       }
-      file.close();
+      Serial.println(CurrentCharacter);
     }
+    file.close();
   }
 }
 
@@ -342,12 +381,12 @@ void setup()
 
   xTaskCreate
     (
-    CheckSD,    // Function that should be called
-    "CheckSD",   // Name of the task (for debugging)
-    2000,            // Stack size (bytes)
-    NULL,            // Parameter to pass
-    1,               // Task priority
-    NULL             // Task handle
+    CheckSD,    
+    "CheckSD",  
+    2000,            
+    NULL,        
+    1,        
+    NULL          
     );
 
   xTaskCreate
@@ -355,6 +394,16 @@ void setup()
     ActualizeSensors,   
     "ActualizeSensors",   
     5000,            
+    NULL,            
+    1,               
+    NULL             
+    );
+
+  xTaskCreate
+    (
+    CheckIR,   
+    "CheckIR",   
+    2000,            
     NULL,            
     1,               
     NULL             
@@ -369,22 +418,5 @@ void loop()
   ShowMenu();
   ShowSettings();
   ShowFromSD();
-  if (irrecv.decode(&results))
-  {
-      Serial.println(results.value, HEX);
-      delay(10);
-
-      switch (results.value)
-      {
-        case 0x76A77416:
-          Serial.println("XD");
-          break;
-
-        case 0x69893291:
-        Serial.println("LOL");
-
-      }
-      irrecv.resume();
-  }
 }
 
