@@ -78,7 +78,6 @@ void CheckSD(void * parameter)
           char random = file.read();
           MaxCharacters+=1;
         }
-        Serial.println(MaxCharacters);
         pages = ceil(float(MaxCharacters)/MaxCharsOnPage);
         CharacterToShow -= 1;
         file.close(); 
