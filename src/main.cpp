@@ -12,6 +12,8 @@
 #include <TouchScreen.h>
 #include <IRremote.h>
 #include <SdFat.h>
+#include <cstdio>
+#include <cmath>
 
 SdFat32 sd;
 File32 file;
@@ -36,7 +38,7 @@ bool LCD = false;
 bool SD = false;
 int MaxCharacters = 0;
 int CharacterToShow = 1;
-
+int pages, ActualPage = 1;
 
 
 
@@ -76,6 +78,7 @@ void CheckSD(void * parameter)
           char random = file.read();
           MaxCharacters+=1;
         }
+        pages = ceil(float(MaxCharacters)/MaxCharsOnPage);
         CharacterToShow -= 1;
         file.close(); 
       }
@@ -344,6 +347,10 @@ void ShowFromSD()
         }
         CharacterToShow += 1;
         Serial.println(CharacterToShow);
+        tft.setCursor(150, 225);
+        tft.print(ActualPage);
+        tft.print("/");
+        tft.print(pages);
       }
       file.close();
     }
