@@ -35,7 +35,7 @@ int toShow = 2;
 bool LCD = false;
 bool SD = false;
 int MaxCharacters = 0;
-int CharacterToShow = 0;
+int CharacterToShow = 1;
 
 
 
@@ -76,6 +76,7 @@ void CheckSD(void * parameter)
           char random = file.read();
           MaxCharacters+=1;
         }
+        CharacterToShow -= 1;
         file.close(); 
       }
       SD = true;
@@ -328,7 +329,7 @@ void ShowFromSD()
       {
         char skipCharacter = file.read();
       }
-      if(column <= 320 & row <= 240)
+      if(column <= 320 & row <= 210)
       {
         delay(3);
         tft.setTextSize(2);
