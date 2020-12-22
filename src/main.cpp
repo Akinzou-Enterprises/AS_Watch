@@ -33,8 +33,9 @@ long long int releasedTime = 0;
 float voltage, tte;
 int toShow = 2;
 bool LCD = false;
-bool SD;
-int CurrentCharacter = 0;
+bool SD = false;
+int MaxCharacters = 0;
+int CharacterToShow = 0;
 
 
 
@@ -65,25 +66,24 @@ void CheckSD(void * parameter)
   for(;;)
   {
     Serial.println("Checking card");
-    if (sd.begin(SD_CONFIG) & !SD) 
+    if (sd.begin(SD_CONFIG) && !SD) 
     {
       Serial.println("Card in");
-      SD = true;
-      if (file.open("SoftSPI.txt", O_RDWR | O_CREAT)) 
+      if (file.open("SoftSPI.txt", O_RDWR | O_CREAT) && MaxCharacters == 0) 
+      {
+        while (file.available())
         {
-          CurrentCharacter = 0;
-          while (file.available())
-          {
-            char character = file.read();
-            Serial.println(character);
-            CurrentCharacter+=1;
-          }
-          file.close(); 
+          char random = file.read();
+          MaxCharacters+=1;
         }
+        file.close(); 
+      }
+      SD = true;
     }
     else if (!sd.begin(SD_CONFIG))
     {
-      CurrentCharacter = 0;
+      Serial.println("Card out");
+      MaxCharacters = 0;
       SD = false;
     }
     
@@ -320,27 +320,33 @@ void ShowSettings()
 
 void ShowFromSD()
 {
-  if(toShow == 2 & SD)
+  if(toShow == 2 && SD && CharacterToShow <= MaxCharacters)
   { 
+    if (file.open("SoftSPI.txt", O_RDWR | O_CREAT))
     {
-
-      delay(5);
+      for(int i = 0; i<CharacterToShow; i++)
+      {
+        char skipCharacter = file.read();
+      }
       if(column <= 320 & row <= 240)
       {
+        delay(3);
         tft.setTextSize(2);
         char readByte = file.read();
         tft.setCursor(column, row); 
+        tft.print(readByte);
         column+=13;
         if(column >= 312)
         {
           row += 16;
           column = 0;
         }
-        tft.print(readByte);
+        CharacterToShow += 1;
+        Serial.println(CharacterToShow);
       }
-      Serial.println(CurrentCharacter);
+      file.close();
     }
-    file.close();
+    
   }
 }
 
