@@ -23,6 +23,7 @@ const uint8_t SOFT_SCK_PIN  = 18;
 #define PanicButton 26
 #define ChProcess 25
 #define IR_PIN 16
+#define MaxCharsOnPage 331
 
 #define XP 34
 #define XM 36
