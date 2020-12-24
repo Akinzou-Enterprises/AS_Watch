@@ -71,7 +71,7 @@ void CheckSD(void * parameter)
     if (sd.begin(SD_CONFIG) && !SD) 
     {
       Serial.println("Card in");
-      if (file.open("SoftSPI.txt", O_RDWR | O_CREAT) && MaxCharacters == 0) 
+      if (file.open("SoftSPI.txt", O_RDONLY) && MaxCharacters == 0) 
       {
         while (file.available())
         {
@@ -111,15 +111,25 @@ void CheckIR(void * parameter)
             break;
 
           case 0x69893291:
-            tft.fillScreen(ILI9341_BLACK);
-            row = 0;
-            column = 0;
-            Serial.println("lol");
-            break;
-
+            if (ActualPage < pages)
+            {
+              tft.fillScreen(ILI9341_BLACK);
+              row = 0;
+              column = 0;
+              Serial.println("lol");
+              ActualPage += 1;
+              break;
+            }
+            else if (ActualPage == pages)
+            {
+              ActualPage = 1;
+              CharacterToShow = 1;
+              break;
+            }
         }
         irrecv.resume();
     }  
+    results.value = 0;
     vTaskDelay(80 / portTICK_PERIOD_MS);
   }
 }
@@ -326,7 +336,7 @@ void ShowFromSD()
 {
   if(toShow == 2 && SD && CharacterToShow <= MaxCharacters)
   { 
-    if (file.open("SoftSPI.txt", O_RDWR | O_CREAT))
+    if (file.open("SoftSPI.txt", O_RDONLY))
     {
       for(int i = 0; i<CharacterToShow; i++)
       {
@@ -424,7 +434,6 @@ void setup()
     );
 
   esp_sleep_enable_ext0_wakeup(GPIO_NUM_26, 0);
-
 }
 
 void loop() 
