@@ -106,25 +106,41 @@ void CheckIR(void * parameter)
 
         switch (results.value)
         {
-          case 0x76A77416:
-            Serial.println("XD");
-            break;
-
-          case 0x69893291:
-            if (ActualPage < pages)
+          case 0xF7807F:
+            if (ActualPage > 1)
             {
               tft.fillScreen(ILI9341_BLACK);
               row = 0;
               column = 0;
-              Serial.println("lol");
-              ActualPage += 1;
+              Serial.println("XD");
+              ActualPage -= 1;
               break;
             }
-            else if (ActualPage == pages)
+            else if (ActualPage == 1)
             {
-              ActualPage = 1;
-              CharacterToShow = 1;
+              ActualPage = pages;
+              CharacterToShow = MaxCharacters - MaxCharsOnPage;
               break;
+            }
+
+          case 0xF700FF:
+            if(MaxCharacters > 0)
+            {
+              if (ActualPage < pages)
+              {
+                tft.fillScreen(ILI9341_BLACK);
+                row = 0;
+                column = 0;
+                Serial.println("lol");
+                ActualPage += 1;
+                break;
+              }
+              else if (ActualPage == pages)
+              {
+                ActualPage = 1;
+                CharacterToShow = 1;
+                break;
+              }
             }
         }
         irrecv.resume();
