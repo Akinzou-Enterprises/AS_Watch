@@ -1,6 +1,7 @@
 #pragma once
 
-enum max31341_register_address {
+enum max31341_register_address 
+{
     MAX31341_REG_CONFIG_REG1_ADDR       = 0x00,
     MAX31341_REG_CONFIG_REG2_ADDR       = 0x01,
     MAX31341_REG_INT_POLARITY_CONFIG_ADDR   = 0x02,
