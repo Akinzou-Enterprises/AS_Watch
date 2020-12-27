@@ -32,3 +32,10 @@ enum max31341_register_address
     MAX31341_REG_END,
 };
 
+class MAX31341
+{
+    public:
+        int begin(); 
+};
+
+
