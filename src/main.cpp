@@ -8,7 +8,6 @@
 #include "Icons.c"
 #include <Adafruit_BME280.h>
 #include <Arduino-MAX17055_Driver.h>
-#include <list>
 #include <TouchScreen.h>
 #include <IRremote.h>
 #include <SdFat.h>
