@@ -35,7 +35,9 @@ enum max31341_register_address
 class MAX31341
 {
     public:
-        int begin(); 
-};
+        void begin(); 
+        void write8(byte reg, byte value);
+        uint8_t read8(byte reg);
+};      
 
 
