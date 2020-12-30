@@ -7,7 +7,6 @@ uint8_t MAX31341Adress = 0x69;
 void MAX31341::begin()
 {
     Wire.begin();
-
 }
 
 void MAX31341::SetHour(int Hour)
