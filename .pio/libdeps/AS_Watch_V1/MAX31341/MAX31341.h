@@ -32,10 +32,32 @@ enum max31341_register_address
     MAX31341_REG_END,
 };
 
+enum ClkInterput 
+{
+    HZ1 = 0b00,
+    HZ50 = 0b01,
+    HZ60 = 0b10,
+    HZ32768 = 0b11,
+};
+
+enum WaveOutputFrequency 
+{
+    HZ01 = 0b00,
+    HZ4098 = 0b01,
+    HZ8192 = 0b10,
+    HZ032768 = 0b11,
+};
+
 class MAX31341
 {
     public:
-        void begin(); 
+        //if somethig what u want is not include in second begin, use this option to manualy give registers to send!
+        void begin(uint8_t Config1, uint8_t Config2);
+
+        //true to turn on, INTCN - true: Output is interrupt, false: Output is square wave
+        void begin(ClkInterput ClkIn, WaveOutputFrequency WaveOutputFreq, bool Oscilator, 
+                        bool ExternalClockInput, bool INTCN) ;
+
         void write8(byte reg, byte value);
         uint8_t read8(byte reg);
         void SetHour(int Hour);
