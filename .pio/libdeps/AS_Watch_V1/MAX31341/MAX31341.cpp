@@ -19,37 +19,37 @@ void MAX31341::begin(ClkInterput ClkIn, WaveOutputFrequency WaveOutputFreq, bool
     
     switch(ClkIn)
     {
-    case HZ1:
-        ConfigToSend |= HZ1 << 4;
+    case CHz1:
+        ConfigToSend |= CHz1 << 4;
         break;
     
-    case HZ50:
-        ConfigToSend |= HZ50 << 4;
+    case CHz50:
+        ConfigToSend |= CHz50 << 4;
         break;
-    case HZ60:
-        ConfigToSend |= HZ60 << 4;
+    case CHz60:
+        ConfigToSend |= CHz60 << 4;
         break;
 
-    case HZ32768:
-        ConfigToSend |= HZ32768 << 4;
+    case CHz32768:
+        ConfigToSend |= CHz32768 << 4;
         break;
     }
 
     switch(WaveOutputFreq)
     {
-    case HZ01:
-        ConfigToSend |= HZ1 << 1;
+    case WHz1:
+        ConfigToSend |= WHz1 << 1;
         break;
     
-    case HZ50:
-        ConfigToSend |= HZ4098 << 1;
+    case WHz4098:
+        ConfigToSend |= WHz4098 << 1;
         break;
-    case HZ60:
-        ConfigToSend |= HZ8192 << 1;
+    case WHz8192:
+        ConfigToSend |= WHz8192 << 1;
         break;
 
-    case HZ032768:
-        ConfigToSend |= HZ32768 << 1;
+    case WHz32768:
+        ConfigToSend |= WHz32768 << 1;
         break;
     }
 
@@ -83,6 +83,11 @@ void MAX31341::begin(ClkInterput ClkIn, WaveOutputFrequency WaveOutputFreq, bool
         ConfigToSend |= 0b0 << 6; 
     }
     write8(MAX31341_REG_CONFIG_REG1_ADDR, ConfigToSend);
+}
+
+void MAX31341::RTCsettings()
+{
+
 }
 
 void MAX31341::SetHour(int Hour)
