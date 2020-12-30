@@ -1,7 +1,5 @@
 #pragma once
 
-uint8_t I2CAddress = 0xD2;
-
 enum max31341_register_address 
 {
     MAX31341_REG_CONFIG_REG1_ADDR       = 0x00,
@@ -40,6 +38,8 @@ class MAX31341
         void begin(); 
         void write8(byte reg, byte value);
         uint8_t read8(byte reg);
+        void SetHour(int Hour);
+        uint8_t GetHour();
 };      
 
 
