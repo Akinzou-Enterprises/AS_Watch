@@ -34,33 +34,44 @@ enum max31341_register_address
 
 enum ClkInterput 
 {
-    CHz1 = 0b00,
-    CHz50 = 0b01,
-    CHz60 = 0b10,
-    CHz32768 = 0b11,
+    CHz1 = 0b00 << 4,
+    CHz50 = 0b01 << 4,
+    CHz60 = 0b10 << 4,
+    CHz32768 = 0b11 << 4,
 };
 
 enum WaveOutputFrequency 
 {
-    WHz1 = 0b00,
-    WHz4098 = 0b01,
-    WHz8192 = 0b10,
-    WHz32768 = 0b11,
+    WHz1 = 0b00 << 1,
+    WHz4098 = 0b01 << 1,
+    WHz8192 = 0b10 << 1,
+    WHz32768 = 0b11 << 1,
+};
+
+enum BREF
+{
+    V1_3 = 0b00 << 4, 
+    V1_7 = 0b01 << 4,
+    V2 = 0b10 << 4,
+    V2_2 = 0b11 << 4,
 };
 
 class MAX31341
 {
     public:
-        //if somethig what u want is not include in second begin, use this option to manualy give registers to send!
-        void begin(uint8_t Config1, uint8_t Config2);
+        //if somethig what u want is not include, use this option to manualy give registers to send!
+        void begin(uint8_t Config1);
+        void RTCsettings(uint8_t Config2);
 
         //true to turn on, INTCN - true: Output is interrupt, false: Output is square wave
-        void begin(ClkInterput ClkIn, WaveOutputFrequency WaveOutputFreq, bool Oscilator, 
-                        bool ExternalClockInput, bool INTCN) ;
+        void begin(ClkInterput ClkIn, WaveOutputFrequency WaveOutputFreq, bool Oscilator, bool ExternalClockInput, bool INTCN) ;
+        void RTCsettings(bool SetRTC, bool ReadRTC, bool I2Ctimeout, BREF voltage, bool DataRetend);
 
-        void RTCsettings();
+        void SetData(byte reg, byte value);
         void write8(byte reg, byte value);
+        void reset();
         uint8_t read8(byte reg);
+
         void SetHour(int Hour);
         uint8_t GetHour();
 };      
