@@ -149,9 +149,6 @@ void MAX31341::reset()
 
 void MAX31341::SetSeconds(int Seconds)
 {
-    ConfigToSend = read8(MAX31341_REG_CONFIG_REG2_ADDR);
-    ConfigToSend &= ~(6);
-    write8(MAX31341_REG_CONFIG_REG2_ADDR, ConfigToSend);
     write8(MAX31341_REG_SECONDS_ADDR, BIN2BCD(Seconds));
     SetRTCData();
 }
@@ -165,6 +162,8 @@ uint8_t MAX31341::GetSeconds()
 
 void MAX31341::SetRTCData()
 {
+    ConfigToSend = read8(MAX31341_REG_CONFIG_REG2_ADDR);
+    ConfigToSend &= ~(6);
     ConfigToSend = read8(MAX31341_REG_CONFIG_REG2_ADDR);
     ConfigToSend &= ~(6);
     write8(MAX31341_REG_CONFIG_REG2_ADDR, ConfigToSend);
