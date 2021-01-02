@@ -1,3 +1,6 @@
+//Before set time set RD and SET in config 2 to 0 and change SET to 1 when u upload values, wait 10ms and change it to 0
+//Before reading set RD to 1
+
 #pragma once
 
 enum max31341_register_address 
@@ -66,14 +69,15 @@ class MAX31341
         //true to turn on, INTCN - true: Output is interrupt, false: Output is square wave
         void begin(ClkInterput ClkIn, WaveOutputFrequency WaveOutputFreq, bool Oscilator, bool ExternalClockInput, bool INTCN) ;
         void RTCsettings(bool SetRTC, bool ReadRTC, bool I2Ctimeout, BREF voltage, bool DataRetend);
-
-        void SetData(byte reg, byte value);
+        void ReadData(byte reg);
+        void SetRTCData();
         void write8(byte reg, byte value);
         void reset();
         uint8_t read8(byte reg);
 
-        void SetHour(int Hour);
-        uint8_t GetHour();
+
+        void SetSeconds(int Seconds);
+        uint8_t GetSeconds();
 };      
 
 
