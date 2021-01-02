@@ -1,9 +1,12 @@
 #include <Arduino.h>
 #include <MAX31341.h>
 #include <Wire.h>
+#define BIN2BCD(val) ((((val) / 10) << 4) + (val) % 10)
+#define BCD2BIN(val) (((val) & 15) + ((val) >> 4) * 10)
 
 uint8_t MAX31341Adress = 0x69;
 uint8_t ConfigToSend;
+
 
 void MAX31341::begin(uint8_t Config1)
 {
@@ -142,27 +145,46 @@ void MAX31341::reset()
     write8(MAX31341_REG_CONFIG_REG1_ADDR, 0b00000001);
 }
 
-void MAX31341::SetHour(int Hour)
-{
-    SetData(MAX31341_REG_HOURS_ADDR, Hour);
-}
 
-uint8_t MAX31341::GetHour()
-{
-    uint8_t Hour = read8(MAX31341_REG_HOURS_ADDR);
-    return Hour;
-}
 
-void MAX31341::SetData(byte reg, byte value)
+void MAX31341::SetSeconds(int Seconds)
 {
     ConfigToSend = read8(MAX31341_REG_CONFIG_REG2_ADDR);
+    ConfigToSend &= ~(6);
+    write8(MAX31341_REG_CONFIG_REG2_ADDR, ConfigToSend);
+    write8(MAX31341_REG_SECONDS_ADDR, BIN2BCD(Seconds));
+    SetRTCData();
+}
+
+
+uint8_t MAX31341::GetSeconds()
+{
+    uint8_t Seconds = BCD2BIN(read8(MAX31341_REG_SECONDS_ADDR));
+    return Seconds;
+}
+
+void MAX31341::SetRTCData()
+{
+    ConfigToSend = read8(MAX31341_REG_CONFIG_REG2_ADDR);
+    ConfigToSend &= ~(6);
+    write8(MAX31341_REG_CONFIG_REG2_ADDR, ConfigToSend);
+    ConfigToSend |= 2;
+    write8(MAX31341_REG_CONFIG_REG2_ADDR, ConfigToSend);
+    delay(15);
     ConfigToSend &= ~(2);
     write8(MAX31341_REG_CONFIG_REG2_ADDR, ConfigToSend);
-    Serial.println(read8(MAX31341_REG_CONFIG_REG2_ADDR));
-    write8(reg, value);
-    ConfigToSend |= 0b1 << 1;
+    ConfigToSend |= 4;
     write8(MAX31341_REG_CONFIG_REG2_ADDR, ConfigToSend);
-    Serial.println(read8(MAX31341_REG_CONFIG_REG2_ADDR));
+}
+
+void MAX31341::ReadData(byte reg)
+{
+    ConfigToSend = read8(MAX31341_REG_CONFIG_REG2_ADDR);
+    ConfigToSend |= 4;
+    write8(reg, ConfigToSend);
+    ConfigToSend &= ~(4);
+    ConfigToSend = read8(MAX31341_REG_CONFIG_REG2_ADDR);
+    write8(reg, ConfigToSend);
 }
 
 void MAX31341::write8(byte reg, byte value) 
