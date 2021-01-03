@@ -156,8 +156,86 @@ void MAX31341::SetSeconds(int Seconds)
 
 uint8_t MAX31341::GetSeconds()
 {
-    uint8_t Seconds = BCD2BIN(read8(MAX31341_REG_SECONDS_ADDR));
-    return Seconds;
+    uint8_t Data = BCD2BIN(read8(MAX31341_REG_SECONDS_ADDR));
+    return Data;
+}
+
+void MAX31341::SetMinutes(int Minutes)
+{
+    write8(MAX31341_REG_MINUTES_ADDR, BIN2BCD(Minutes));
+    SetRTCData();
+}
+
+
+uint8_t MAX31341::GetMinutes()
+{
+    uint8_t Data = BCD2BIN(read8(MAX31341_REG_MINUTES_ADDR));
+    return Data;
+}
+
+void MAX31341::SetHours(int Hours)
+{
+    write8(MAX31341_REG_HOURS_ADDR, BIN2BCD(Hours));
+    SetRTCData();
+}
+
+
+uint8_t MAX31341::GetHours()
+{
+    uint8_t Data = BCD2BIN(read8(MAX31341_REG_HOURS_ADDR));
+    return Data;
+}
+
+void MAX31341::SetDay(int Days)
+{
+    write8(MAX31341_REG_DAY_ADDR, BIN2BCD(Days));
+    SetRTCData();
+}
+
+
+uint8_t MAX31341::GetDay()
+{
+    uint8_t Data = BCD2BIN(read8(MAX31341_REG_DAY_ADDR));
+    return Data;
+}
+
+void MAX31341::SetMonth(int Month)
+{
+    write8(MAX31341_REG_MONTH_ADDR, BIN2BCD(Month));
+    SetRTCData();
+}
+
+
+uint8_t MAX31341::GetMonth()
+{
+    uint8_t Data = BCD2BIN(read8(MAX31341_REG_MONTH_ADDR));
+    return Data;
+}
+
+void MAX31341::SetYear(int Year)
+{
+    write8(MAX31341_REG_YEAR_ADDR, BIN2BCD(Year));
+    SetRTCData();
+}
+
+
+uint8_t MAX31341::GetYear()
+{
+    uint8_t Data = BCD2BIN(read8(MAX31341_REG_YEAR_ADDR));
+    return Data;
+}
+
+void MAX31341::SetDate(int Date)
+{
+    write8(MAX31341_REG_DATE_ADDR, BIN2BCD(Date));
+    SetRTCData();
+}
+
+
+uint8_t MAX31341::GetDate()
+{
+    uint8_t Data = BCD2BIN(read8(MAX31341_REG_DATE_ADDR));
+    return Data;
 }
 
 void MAX31341::SetRTCData()

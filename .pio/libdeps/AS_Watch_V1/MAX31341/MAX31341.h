@@ -78,6 +78,28 @@ class MAX31341
 
         void SetSeconds(int Seconds);
         uint8_t GetSeconds();
+
+        void SetSeconds(int Seconds);
+        uint8_t GetSeconds();
+
+        void SetMinutes(int Minutes);
+        uint8_t GetMinutes();
+
+        void SetHours(int Hours);
+        uint8_t GetHours();
+
+        void SetDay(int Days);
+        uint8_t GetDay();
+
+        void SetMonth(int Month);
+        uint8_t GetMonth();
+
+        void SetYear(int Year);
+        uint8_t GetYear();
+
+        void SetDate(int Date);
+        uint8_t GetDate();
+        
 };      
 
 
