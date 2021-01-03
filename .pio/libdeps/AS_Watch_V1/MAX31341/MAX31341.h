@@ -79,9 +79,6 @@ class MAX31341
         void SetSeconds(int Seconds);
         uint8_t GetSeconds();
 
-        void SetSeconds(int Seconds);
-        uint8_t GetSeconds();
-
         void SetMinutes(int Minutes);
         uint8_t GetMinutes();
 
