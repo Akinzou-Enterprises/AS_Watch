@@ -90,10 +90,10 @@ void CheckSD(void * parameter)
 {
   for(;;)
   {
-    Serial.println("Checking card");
+    //Serial.println("Checking card");
     if (sd.begin(SD_CONFIG) && !SD) 
     {
-      Serial.println("Card in");
+      //Serial.println("Card in");
       if (file.open("SoftSPI.txt", O_RDONLY) && MaxCharacters == 0) 
       {
         while (file.available())
@@ -109,7 +109,7 @@ void CheckSD(void * parameter)
     }
     else if (!sd.begin(SD_CONFIG))
     {
-      Serial.println("Card out");
+      //Serial.println("Card out");
       MaxCharacters = 0;
       SD = false;
     }
@@ -425,9 +425,6 @@ void setup()
 {
   rtc.begin(0b00000001);
   rtc.RTCsettings(0);
-  rtc.SetHours(4);
-  rtc.SetMinutes(0);
-  rtc.SetRTCData();
   irrecv.enableIRIn();
   irrecv.blink13(true);
   analogReadResolution(10);
@@ -495,4 +492,29 @@ void loop()
   ShowMenu();
   ShowSettings();
   ShowFromSD();
+  
+  ReadSerial();
+
+  if (Command == "A")
+  {
+    Serial.print("Connected!");
+  }
+
+  if (Command == "A0")
+  {
+    ReadSerial();
+    rtc.SetSeconds(atoi(Command.c_str()));
+    ReadSerial();
+    rtc.SetMinutes(atoi(Command.c_str()));
+    ReadSerial();
+    rtc.SetHours(atoi(Command.c_str()));
+    delay(10);
+    rtc.SetRTCData();
+  }
+
+  if (Command == "A3")
+  {
+    Serial.println(rtc.GetSeconds());
+    Serial.println(rtc.GetMinutes());
+  }
 }
