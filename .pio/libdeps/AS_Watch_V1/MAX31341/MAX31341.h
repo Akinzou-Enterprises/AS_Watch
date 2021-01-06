@@ -68,7 +68,7 @@ class MAX31341
 
         //true to turn on, INTCN - true: Output is interrupt, false: Output is square wave
         void begin(ClkInterput ClkIn, WaveOutputFrequency WaveOutputFreq, bool Oscilator, bool ExternalClockInput, bool INTCN) ;
-        void RTCsettings(bool SetRTC, bool ReadRTC, bool I2Ctimeout, BREF voltage, bool DataRetend);
+        void RTCsettings(bool I2Ctimeout, BREF voltage, bool DataRetend);
         void ReadData(byte reg);
         void SetRTCData();
         void write8(byte reg, byte value);
