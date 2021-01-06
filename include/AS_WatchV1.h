@@ -1,7 +1,7 @@
 // BME280:     0x76: connected to GND,       0x77: connected to VDDIO
-// MAX31341:   The address is 0xD2           (left justified with LSB set to 0).
-//ICM-20600:   b1101000: connected to GND,   b1101001: connected to VDDIO
-//MAX17055:    0x6C                          (or 0x36 for 7 MSbit address).
+// MAX31341:   The address is 0xD2 (left justified with LSB set to 0).
+//ICM-20600:   b1101001
+//MAX17055:    0x6C
 
 //Go to .platformio\packages\framework-arduinoespressif32\variants\esp32, open pins_arduino.h and change MOSI, MISO, SCK to: 
 
