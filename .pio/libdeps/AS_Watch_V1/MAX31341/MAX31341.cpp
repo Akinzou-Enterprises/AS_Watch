@@ -93,19 +93,10 @@ void MAX31341::begin(ClkInterput ClkIn, WaveOutputFrequency WaveOutputFreq, bool
     write8(MAX31341_REG_CONFIG_REG1_ADDR, ConfigToSend);
 }
 
-void MAX31341::RTCsettings(bool SetRTC, bool ReadRTC, bool I2Ctimeout, BREF voltage, bool DataRetend)
+void MAX31341::RTCsettings(bool I2Ctimeout, BREF voltage, bool DataRetend)
 {
     ConfigToSend = 0b00000000;
-    if (SetRTC)
-    {
-        ConfigToSend |= 0b1 << 1;
-    }
 
-    if (ReadRTC)
-    {
-        ConfigToSend |= 0b1 << 2;
-    }
-    
     if(I2Ctimeout)
     {
         ConfigToSend |= 0b1 << 3;

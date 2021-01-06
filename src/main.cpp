@@ -13,7 +13,11 @@
 #include <SdFat.h>
 #include <cstdio>
 #include <cmath>
+#include <MAX31341.h>
 
+String Command = "";
+
+MAX31341 rtc;
 SdFat32 sd;
 File32 file;
 IRrecv irrecv(IR_PIN);
@@ -25,19 +29,37 @@ TouchScreen ts = TouchScreen(XM, YM, XP, YP, 380);
 SoftSpiDriver<SOFT_MISO_PIN, SOFT_MOSI_PIN, SOFT_SCK_PIN> softSpi;
 
 int column, row = 0;
-int hall, temp, pressure, humidity, altidute, soc, pressDuration, ChProcessStat, capicity;
+int hall, temp, pressure, humidity, altidute, soc, pressDuration, ChProcessStat, capicity, minutes, hours;
 int SEALEVELPRESSURE_HPA = 1013;
 int lastState = LOW;
 int currentState;
 long long int pressedTime  = 0;
 long long int releasedTime = 0;
 float voltage, tte;
-int toShow = 2;
+int toShow = 0;
 bool LCD = false;
 bool SD = false;
 int MaxCharacters = 0;
 int CharacterToShow = 1;
 int pages, ActualPage = 1;
+
+
+
+//functions
+String ReadSerial()
+{
+  Command = "";
+  while (Serial.available() > 0)
+  {
+    char read = char(Serial.read());
+    if (read == ' ')
+    {
+      break;
+    }
+    Command += read;
+  }
+  return Command;
+}
 
 
 
@@ -58,7 +80,9 @@ void ActualizeSensors(void * parameter)
     {
       altidute = bme.readAltitude(SEALEVELPRESSURE_HPA);
     }
-    vTaskDelay(750 / portTICK_PERIOD_MS);
+    hours = rtc.GetHours();
+    minutes = rtc.GetMinutes();
+    vTaskDelay(800 / portTICK_PERIOD_MS);
   }
 }
 
@@ -208,7 +232,17 @@ void ShowMenu()
 
     tft.setCursor(70, 45);      //Hour
     tft.setTextSize(6);
-    tft.println("14:10"); 
+    if(hours <= 9)
+    {
+      tft.print("0");
+    }
+    tft.print(hours);
+    tft.print(":");
+    if(minutes <= 9)
+    {
+      tft.print("0");
+    }
+    tft.println(minutes); 
 
     tft.drawRGBBitmap(0, 0, SettingsIcon, 30, 30);
 
@@ -389,6 +423,11 @@ void ShowFromSD()
 //Arduino code
 void setup() 
 {
+  rtc.begin(0b00000001);
+  rtc.RTCsettings(0);
+  rtc.SetHours(4);
+  rtc.SetMinutes(0);
+  rtc.SetRTCData();
   irrecv.enableIRIn();
   irrecv.blink13(true);
   analogReadResolution(10);
@@ -396,7 +435,7 @@ void setup()
   tft.invertDisplay(ILI9341_INVOFF);
   bat.setCapacity(1200);
   bat.setResistSensor(0.01);
-  Serial.begin(9600);
+  Serial.begin(115200);
   Serial.println("WakeUp");
   bme.begin();
   pinMode(ChProcess, INPUT);
@@ -457,4 +496,3 @@ void loop()
   ShowSettings();
   ShowFromSD();
 }
-
