@@ -95,7 +95,7 @@ void MAX31341::begin(ClkInterput ClkIn, WaveOutputFrequency WaveOutputFreq, bool
 
 void MAX31341::RTCsettings(bool I2Ctimeout, BREF voltage, bool DataRetend)
 {
-    ConfigToSend = 0b00000000;
+    ConfigToSend = 0b00000100;
 
     if(I2Ctimeout)
     {
