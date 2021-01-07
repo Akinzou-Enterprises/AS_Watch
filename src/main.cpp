@@ -68,20 +68,23 @@ void ActualizeSensors(void * parameter)
 {
   for(;;)
   {
-    soc = bat.getSOC();
-    capicity = bat.getCapacity();
-    voltage = bat.getInstantaneousVoltage();
-    tte = bat.getTimeToEmpty();
-    hall = hallRead();   
-    temp = bme.readTemperature();
-    pressure = bme.readPressure();
-    humidity = bme.readHumidity();
-    if(bme.readAltitude(SEALEVELPRESSURE_HPA) > -9999)
+    if(Command == "")
     {
-      altidute = bme.readAltitude(SEALEVELPRESSURE_HPA);
+      soc = bat.getSOC();
+      capicity = bat.getCapacity();
+      voltage = bat.getInstantaneousVoltage();
+      tte = bat.getTimeToEmpty();
+      hall = hallRead();   
+      temp = bme.readTemperature();
+      pressure = bme.readPressure();
+      humidity = bme.readHumidity();
+      if(bme.readAltitude(SEALEVELPRESSURE_HPA) > -9999)
+      {
+        altidute = bme.readAltitude(SEALEVELPRESSURE_HPA);
+      }
+      hours = rtc.GetHours();
+      minutes = rtc.GetMinutes();
     }
-    hours = rtc.GetHours();
-    minutes = rtc.GetMinutes();
     vTaskDelay(800 / portTICK_PERIOD_MS);
   }
 }
@@ -424,7 +427,7 @@ void ShowFromSD()
 void setup() 
 {
   rtc.begin(0b00000001);
-  rtc.RTCsettings(0);
+  rtc.RTCsettings(false, V1_3, false);
   irrecv.enableIRIn();
   irrecv.blink13(true);
   analogReadResolution(10);
@@ -508,7 +511,6 @@ void loop()
     rtc.SetMinutes(atoi(Command.c_str()));
     ReadSerial();
     rtc.SetHours(atoi(Command.c_str()));
-    delay(10);
     rtc.SetRTCData();
   }
 
