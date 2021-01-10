@@ -3,7 +3,8 @@
 #include <SPI.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_ILI9341.h>
-#include "AS_WatchV1.h" //Include pins file!
+#include "boards/AS_WatchV1.h" //Include pins file!
+#include "languages/pl.h" //Language
 #include <stdint.h>
 #include "Icons.c"
 #include <Adafruit_BME280.h>
@@ -15,6 +16,7 @@
 #include <cmath>
 #include <MAX31341.h>
 
+#define AOSversion "Alpha_0v1"
 String Command = "";
 
 MAX31341 rtc;
@@ -36,7 +38,7 @@ int currentState;
 long long int pressedTime  = 0;
 long long int releasedTime = 0;
 float voltage, tte;
-int toShow = 0;
+int toShow = 1;
 bool LCD = false;
 bool SD = false;
 int MaxCharacters = 0;
@@ -258,7 +260,7 @@ void ShowMenu()
     tft.setTextSize(2);        //altidute
     tft.setCursor(0, 195); 
     tft.print(altidute);
-    tft.println("m a.s.l");
+    tft.println(MASL);
 
     tft.setTextSize(2);        //Pressure
     tft.setCursor(0, 225);
@@ -327,58 +329,58 @@ void ShowSettings()
 
     tft.fillRect(40, 40, 270, 170, ILI9341_BLACK);
 
-    tft.setTextSize(2);        //Humidity
+    tft.setTextSize(2);        
     tft.setCursor(40, 40); 
-    tft.print("Humidity: ");
+    tft.print(HUMIDITY);
     tft.print(humidity);
     tft.println("%");
 
-    tft.setTextSize(2);        //Temp
+    tft.setTextSize(2);        
     tft.setCursor(40, 70);
-    tft.print("Temp: "); 
+    tft.print(TEMP); 
     tft.print(temp);
     tft.setTextSize(1);
     tft.print("*");
     tft.setTextSize(2);
     tft.println("C");
 
-    tft.setTextSize(2);         //Hall
+    tft.setTextSize(2);         
     tft.setCursor(40, 100);
-    tft.print("Hall: ");
+    tft.print(HALL);
     tft.print(hall);
     tft.setTextSize(1);
     tft.println("*");
 
-    tft.setTextSize(2);        //Humidity
+    tft.setTextSize(2);        
     tft.setCursor(40, 130); 
-    tft.print("Voltage: ");
+    tft.print(VOLTAGE);
     tft.print(voltage);
     tft.println("V");
 
-    tft.setTextSize(2);        //Humidity
+    tft.setTextSize(2);        
     tft.setCursor(40, 160); 
-    tft.print("Capacity: ");
+    tft.print(CAPACITY);
     tft.print(capicity);
     tft.println("mAh");
 
     if(!digitalRead(ChProcess))
     {
-      tft.setTextSize(2);        //Humidity
+      tft.setTextSize(2);        
       tft.setCursor(40, 190); 
-      tft.println("Charging");
+      tft.println(CHARGING);
     }
     else
     {
-      tft.setTextSize(2);        //Humidity
+      tft.setTextSize(2);        
       tft.setCursor(40, 190); 
-      tft.print("Time to empty: ");
+      tft.print(TIMEtoEMPTY);
       tft.print(tte);
       tft.println("h");
     }
 
-    tft.setTextSize(2);        //Humidity
+    tft.setTextSize(2);        
     tft.setCursor(90, 220); 
-    tft.print("Go to sleep");
+    tft.print(AOSversion);
     
     delay(200);
   }

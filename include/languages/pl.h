@@ -1,0 +1,8 @@
+#define MASL "m n.p.m"
+#define HUMIDITY "Wilgotnosc: "
+#define TEMP "Temp: "
+#define HALL "Kompas: "
+#define VOLTAGE "Napiecie: "
+#define CAPACITY "Pojemnosc: "
+#define CHARGING "Laduje"
+#define TIMEtoEMPTY "Pozostlo: "

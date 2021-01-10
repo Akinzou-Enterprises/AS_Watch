@@ -1,0 +1,8 @@
+#define MASL "m a.s.l"
+#define HUMIDITY "Humidity: "
+#define TEMP "Temp: "
+#define HALL "Compass: "
+#define VOLTAGE "Voltage: "
+#define CAPACITY "Capacity: "
+#define CHARGING "Charging"
+#define TIMEtoEMPTY "Time to empty: "
