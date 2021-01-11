@@ -38,7 +38,7 @@ int currentState;
 long long int pressedTime  = 0;
 long long int releasedTime = 0;
 float voltage, tte;
-int toShow = 1;
+int toShow = 0;
 bool LCD = false;
 bool SD = false;
 int MaxCharacters = 0;
@@ -514,11 +514,31 @@ void loop()
     ReadSerial();
     rtc.SetHours(atoi(Command.c_str()));
     rtc.SetRTCData();
+    delay(700);
+  }
+
+  if (Command == "A1")
+  {
+    Serial.println(rtc.GetSeconds());
+    Serial.println(rtc.GetMinutes());
+  }
+
+  if (Command == "A2")
+  {
+    ReadSerial();
+    rtc.SetDate(atoi(Command.c_str()));
+    ReadSerial();
+    rtc.SetMonth(atoi(Command.c_str()));
+    ReadSerial();
+    rtc.SetYear(atoi(Command.c_str()));
+    rtc.SetRTCData();
+    delay(700);
   }
 
   if (Command == "A3")
   {
-    Serial.println(rtc.GetSeconds());
-    Serial.println(rtc.GetMinutes());
+    Serial.println(rtc.GetDate());
+    Serial.println(rtc.GetMonth());
+    Serial.println(rtc.GetYear());
   }
 }
