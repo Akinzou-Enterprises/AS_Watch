@@ -6,3 +6,11 @@
 #define CAPACITY "Pojemnosc: "
 #define CHARGING "Laduje"
 #define TIMEtoEMPTY "Pozostlo: "
+
+#define MONDAY "Pon. "
+#define TUESDAY "Wtorek "
+#define WEDNESDAY "Sroda "
+#define THURSDAY "Czwart. "
+#define FRIDAY "Piatek "
+#define SATURDAY "Sobota "
+#define SUNDAY "Niedz. "
