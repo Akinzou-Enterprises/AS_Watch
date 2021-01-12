@@ -4,7 +4,7 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_ILI9341.h>
 #include "boards/AS_WatchV1.h" //Include pins file!
-#include "languages/pl.h" //Language
+#include "languages/en.h" //Language
 #include <stdint.h>
 #include "Icons.c"
 #include <Adafruit_BME280.h>
@@ -44,7 +44,7 @@ bool SD = false;
 int MaxCharacters = 0;
 int CharacterToShow = 1;
 int pages, ActualPage = 1;
-
+int day, month, dayOfWeek;
 
 
 //functions
@@ -86,6 +86,15 @@ void ActualizeSensors(void * parameter)
       }
       hours = rtc.GetHours();
       minutes = rtc.GetMinutes();
+      day = rtc.GetDate();
+      month = rtc.GetMonth();
+      if (!rtc.GetDay())
+      {
+        rtc.SetDay(1);
+        rtc.SetRTCData();
+      }
+      
+      dayOfWeek = rtc.GetDay();
     }
     vTaskDelay(800 / portTICK_PERIOD_MS);
   }
@@ -229,10 +238,10 @@ void ShowMenu()
   {
     int BattColor;
     tft.fillRect(0, 0, 60, 34, ILI9341_BLACK);         //Hall
-    tft.fillRect(70, 40, 180, 55, ILI9341_BLACK);      //Hour
+    tft.fillRect(70, 40, 180, 75, ILI9341_BLACK);      //Hour
     tft.fillRect(230, 0, 100, 30, ILI9341_BLACK);      //battery %
     tft.fillRect(230, 220, 90, 240, ILI9341_BLACK);   //Accel
-    tft.fillRect(0, 180, 140, 230, ILI9341_BLACK);     //heigh & temp & pressure & humidity
+    tft.fillRect(0, 180, 140, 230, ILI9341_BLACK);     //heigh & pressure 
 
 
     tft.setCursor(70, 45);      //Hour
@@ -247,7 +256,54 @@ void ShowMenu()
     {
       tft.print("0");
     }
-    tft.println(minutes); 
+    tft.println(minutes);
+    tft.setCursor(80, 95); 
+    tft.setTextSize(2);
+
+    switch(dayOfWeek)
+    {
+      case 1:
+        tft.print(MONDAY);
+        break;
+
+      case 2:
+        tft.print(TUESDAY);
+        break;
+
+      case 3:
+        tft.print(WEDNESDAY);
+        break;
+
+      case 4:
+        tft.print(THURSDAY);
+        break;
+        
+      case 5:
+        tft.print(FRIDAY);
+        break;
+
+      case 6:
+        tft.print(SATURDAY);
+        break;
+
+      case 7:
+        tft.print(SUNDAY);
+        break;
+    };
+
+    if(day <= 9)
+    {
+      tft.print("0");
+    }
+    tft
+    .print(day);
+    tft.print(".");
+
+    if(month <= 9)
+    {
+      tft.print("0");
+    }
+    tft.print(month);
 
     tft.drawRGBBitmap(0, 0, SettingsIcon, 30, 30);
 
@@ -272,7 +328,7 @@ void ShowMenu()
       BattColor = ILI9341_GREEN;
     }
   
-    else if (soc<51 & soc>21)
+    else if (soc<=51 & soc>21)
     {
       BattColor = ILI9341_YELLOW;
     }
@@ -514,7 +570,7 @@ void loop()
     ReadSerial();
     rtc.SetHours(atoi(Command.c_str()));
     rtc.SetRTCData();
-    delay(700);
+    delay(800);
   }
 
   if (Command == "A1")
@@ -531,8 +587,10 @@ void loop()
     rtc.SetMonth(atoi(Command.c_str()));
     ReadSerial();
     rtc.SetYear(atoi(Command.c_str()));
+    ReadSerial();
+    rtc.SetDay(atoi(Command.c_str()));
     rtc.SetRTCData();
-    delay(700);
+    delay(800);
   }
 
   if (Command == "A3")
@@ -540,5 +598,7 @@ void loop()
     Serial.println(rtc.GetDate());
     Serial.println(rtc.GetMonth());
     Serial.println(rtc.GetYear());
+    Serial.println(rtc.GetDay());
   }
+  
 }
