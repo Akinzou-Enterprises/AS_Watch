@@ -6,3 +6,11 @@
 #define CAPACITY "Capacity: "
 #define CHARGING "Charging"
 #define TIMEtoEMPTY "Time to empty: "
+
+#define MONDAY "Monday "
+#define TUESDAY "Tuesday "
+#define WEDNESDAY "Wed.  "
+#define THURSDAY "Thurs. "
+#define FRIDAY "Friday "
+#define SATURDAY "Sat. "
+#define SUNDAY "Sunday "
