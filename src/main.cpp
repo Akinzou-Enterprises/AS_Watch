@@ -4,7 +4,7 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_ILI9341.h>
 #include "boards/AS_WatchV1.h" //Include pins file!
-#include "languages/en.h" //Language
+#include "languages/pl.h" //Language
 #include <stdint.h>
 #include "Icons.c"
 #include <Adafruit_BME280.h>
@@ -225,6 +225,18 @@ void CheckButton(void * parameter)
     }
     lastState = currentState;
     vTaskDelay(80 / portTICK_PERIOD_MS);
+  }
+}
+
+void CheckVoltage(void * parameter)
+{
+  for(;;)
+  {
+    if(voltage < 3.3 & voltage != 0)
+    {
+      esp_deep_sleep_start();
+    }
+    vTaskDelay(2000 / portTICK_PERIOD_MS);
   }
 }
 
@@ -546,6 +558,17 @@ void setup()
     );
 
   esp_sleep_enable_ext0_wakeup(GPIO_NUM_26, 0);
+
+  xTaskCreate
+    (
+    CheckVoltage,   
+    "CheckVoltage",   
+    2000,            
+    NULL,            
+    1,               
+    NULL             
+    );
+  
 }
 
 void loop() 
