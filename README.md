@@ -5,6 +5,6 @@
 ### static const uint8_t MISO = 17;
 ### static const uint8_t SCK = 14;
 
-##OR
+## OR
 
-###Just upload .bin file!
+### Just upload .bin file!
