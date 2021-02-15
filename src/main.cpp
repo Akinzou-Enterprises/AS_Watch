@@ -1,10 +1,10 @@
 #include <Arduino.h>
+#include "boards/AS_WatchV1.h" //Include pins file!
+#include "languages/pl.h" //Language
 #include <Wire.h>   
 #include <SPI.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_ILI9341.h>
-#include "boards/AS_WatchV1.h" //Include pins file!
-#include "languages/pl.h" //Language
 #include <stdint.h>
 #include "Icons.c"
 #include <Adafruit_BME280.h>
@@ -15,6 +15,8 @@
 #include <cstdio>
 #include <cmath>
 #include <MAX31341.h>
+#include <lvgl.h>
+
 
 #define AOSversion "Alpha_0v1"
 String Command = "";
