@@ -9,18 +9,19 @@
 #include "Icons.c"
 #include <Adafruit_BME280.h>
 #include <Arduino-MAX17055_Driver.h>
-#include <TouchScreen.h>
 #include <IRremote.h>
 #include <SdFat.h>
 #include <cstdio>
 #include <cmath>
 #include <MAX31341.h>
 #include <lvgl.h>
+#include <TFT_eSPI.h>
 
 
 #define AOSversion "Alpha_0v1"
 String Command = "";
 
+TFT_eSPI tft = TFT_eSPI();
 MAX31341 rtc;
 SdFat32 sd;
 File32 file;
@@ -28,8 +29,6 @@ IRrecv irrecv(IR_PIN);
 decode_results results;
 MAX17055 bat;
 Adafruit_BME280 bme;
-Adafruit_ILI9341 tft = Adafruit_ILI9341(TFT_CS, TFT_DC, TFT_RST);
-TouchScreen ts = TouchScreen(XM, YM, XP, YP, 380);
 SoftSpiDriver<SOFT_MISO_PIN, SOFT_MOSI_PIN, SOFT_SCK_PIN> softSpi;
 
 int column, row = 0;
@@ -250,6 +249,7 @@ void ShowMenu()
 {
   if(toShow == 0)
   {
+    tft.startWrite();
     int BattColor;
     tft.fillRect(0, 0, 60, 34, ILI9341_BLACK);         //Hall
     tft.fillRect(70, 40, 180, 75, ILI9341_BLACK);      //Hour
@@ -319,8 +319,6 @@ void ShowMenu()
     }
     tft.print(month);
 
-    tft.drawRGBBitmap(0, 0, SettingsIcon, 30, 30);
-
     tft.setTextSize(2);
     tft.setCursor(230, 225);    //Accel
     tft.print("16");
@@ -354,7 +352,7 @@ void ShowMenu()
     
     if (digitalRead(ChProcess))
     {
-      tft.drawRGBBitmap(280, 0, Battery, 37, 20);
+
     
       tft.setTextSize(2);        
       if(soc < 100)
@@ -371,7 +369,7 @@ void ShowMenu()
     
     else
     {
-      tft.drawRGBBitmap(280, 0, BatteryCharging, 37, 20);
+
     
       tft.setTextSize(2);        
       if(soc < 100)
@@ -388,6 +386,8 @@ void ShowMenu()
 
     tft.fillRect(282, 2, 31*soc/100, 16, BattColor);
     delay(50);
+    tft.endWrite();
+    
   }
 }
 
@@ -395,7 +395,6 @@ void ShowSettings()
 {
   if(toShow == 1)
   {
-    tft.drawRGBBitmap(0, 0, ReturnIcon, 30, 30);
 
     tft.fillRect(40, 40, 270, 170, ILI9341_BLACK);
 
@@ -493,8 +492,6 @@ void ShowFromSD()
 }
 
 
-
-
 //Arduino code
 void setup() 
 {
@@ -503,8 +500,6 @@ void setup()
   irrecv.enableIRIn();
   irrecv.blink13(true);
   analogReadResolution(10);
-  tft.begin();
-  tft.invertDisplay(ILI9341_INVOFF);
   bat.setCapacity(1200);
   bat.setResistSensor(0.01);
   Serial.begin(115200);
@@ -514,9 +509,10 @@ void setup()
   pinMode(PanicButton, INPUT);
   pinMode(LCD_Switch, OUTPUT);
   digitalWrite(LCD_Switch, LOW);
-  tft.setSPISpeed(25000000);
-  tft.fillScreen(ILI9341_BLACK);
+  lv_init();
+  tft.begin();
   tft.setRotation(3);
+
 
   xTaskCreate
     (
@@ -575,55 +571,8 @@ void setup()
 
 void loop() 
 { 
-  ShowMenu();
-  ShowSettings();
-  ShowFromSD();
-  
-  ReadSerial();
-
-  if (Command == "A")
-  {
-    Serial.print("Connected!");
-  }
-
-  if (Command == "A0")
-  {
-    ReadSerial();
-    rtc.SetSeconds(atoi(Command.c_str()));
-    ReadSerial();
-    rtc.SetMinutes(atoi(Command.c_str()));
-    ReadSerial();
-    rtc.SetHours(atoi(Command.c_str()));
-    rtc.SetRTCData();
-    delay(800);
-  }
-
-  if (Command == "A1")
-  {
-    Serial.println(rtc.GetSeconds());
-    Serial.println(rtc.GetMinutes());
-  }
-
-  if (Command == "A2")
-  {
-    ReadSerial();
-    rtc.SetDate(atoi(Command.c_str()));
-    ReadSerial();
-    rtc.SetMonth(atoi(Command.c_str()));
-    ReadSerial();
-    rtc.SetYear(atoi(Command.c_str()));
-    ReadSerial();
-    rtc.SetDay(atoi(Command.c_str()));
-    rtc.SetRTCData();
-    delay(800);
-  }
-
-  if (Command == "A3")
-  {
-    Serial.println(rtc.GetDate());
-    Serial.println(rtc.GetMonth());
-    Serial.println(rtc.GetYear());
-    Serial.println(rtc.GetDay());
-  }
-  
+  tft.startWrite();
+  tft.fillScreen(ILI9341_BLUE);
+  tft.endWrite();
+  delay(200);
 }
