@@ -3,8 +3,6 @@
 #include "languages/pl.h" //Language
 #include <Wire.h>   
 #include <SPI.h>
-#include <Adafruit_GFX.h>
-#include <Adafruit_ILI9341.h>
 #include <stdint.h>
 #include "Icons.c"
 #include <Adafruit_BME280.h>
@@ -14,7 +12,6 @@
 #include <cstdio>
 #include <cmath>
 #include <MAX31341.h>
-#include <lvgl.h>
 #include <TFT_eSPI.h>
 
 
@@ -309,8 +306,7 @@ void ShowMenu()
     {
       tft.print("0");
     }
-    tft
-    .print(day);
+    tft.print(day);
     tft.print(".");
 
     if(month <= 9)
@@ -385,7 +381,7 @@ void ShowMenu()
     }
 
     tft.fillRect(282, 2, 31*soc/100, 16, BattColor);
-    delay(50);
+    delay(15);
     tft.endWrite();
     
   }
@@ -509,7 +505,6 @@ void setup()
   pinMode(PanicButton, INPUT);
   pinMode(LCD_Switch, OUTPUT);
   digitalWrite(LCD_Switch, LOW);
-  lv_init();
   tft.begin();
   tft.setRotation(3);
 
@@ -566,13 +561,61 @@ void setup()
     1,               
     NULL             
     );
+    tft.fillScreen(ILI9341_BLACK);
   
 }
 
 void loop() 
 { 
-  tft.startWrite();
-  tft.fillScreen(ILI9341_BLUE);
-  tft.endWrite();
-  delay(200);
+ ShowMenu();
+  ShowSettings();
+  ShowFromSD();
+  
+  ReadSerial();
+
+  if (Command == "A")
+  {
+    Serial.print("Connected!");
+  }
+
+  if (Command == "A0")
+  {
+    ReadSerial();
+    rtc.SetSeconds(atoi(Command.c_str()));
+    ReadSerial();
+    rtc.SetMinutes(atoi(Command.c_str()));
+    ReadSerial();
+    rtc.SetHours(atoi(Command.c_str()));
+    rtc.SetRTCData();
+    delay(800);
+  }
+
+  if (Command == "A1")
+  {
+    Serial.println(rtc.GetSeconds());
+    Serial.println(rtc.GetMinutes());
+  }
+
+  if (Command == "A2")
+  {
+    ReadSerial();
+    rtc.SetDate(atoi(Command.c_str()));
+    ReadSerial();
+    rtc.SetMonth(atoi(Command.c_str()));
+    ReadSerial();
+    rtc.SetYear(atoi(Command.c_str()));
+    ReadSerial();
+    rtc.SetDay(atoi(Command.c_str()));
+    rtc.SetRTCData();
+    delay(800);
+  }
+
+  if (Command == "A3")
+  {
+    Serial.println(rtc.GetDate());
+    Serial.println(rtc.GetMonth());
+    Serial.println(rtc.GetYear());
+    Serial.println(rtc.GetDay());
+  }
+
 }
