@@ -1,6 +1,6 @@
 // BME280:     0x76: connected to GND,       0x77: connected to VDDIO
-// MAX31341:   The address is 0xD2 (left justified with LSB set to 0).
-//ICM-20600:   b1101001
+// MAX31341:   The address is 1101 001 (left justified with LSB set to 0).
+//ICM-20600:   1101 000 (SA0 = LOW) 1101 001 (SA0 = HIGH)
 //MAX17055:    0x6C
 
 //Go to .platformio\packages\framework-arduinoespressif32\variants\esp32, open pins_arduino.h and change MOSI, MISO, SCK to: 
@@ -14,12 +14,8 @@ const uint8_t SOFT_MISO_PIN = 19;
 const uint8_t SOFT_MOSI_PIN = 23;
 const uint8_t SOFT_SCK_PIN  = 18;
 
-#define TFT_MISO 19
-#define TFT_MOSI 23
-#define TFT_SCLK 18
-#define TFT_CS   15  
-#define TFT_DC    4  
-#define TFT_RST   27 
+
+
 
 #define SD_FAT_TYPE 1
 #define SD_CONFIG SdSpiConfig(SD_CS_PIN, DEDICATED_SPI, SD_SCK_MHZ(10), &softSpi)

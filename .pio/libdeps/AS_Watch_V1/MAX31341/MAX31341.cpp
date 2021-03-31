@@ -266,3 +266,4 @@ uint8_t MAX31341::read8(byte reg)
     value = Wire.read();
     return value;
 }
+
