@@ -240,7 +240,6 @@ void CheckVoltage(void * parameter)
 
 
 
-
 //LCD showing
 void ShowMenu()
 {
@@ -252,7 +251,8 @@ void ShowMenu()
     tft.fillRect(70, 40, 180, 75, ILI9341_BLACK);      //Hour
     tft.fillRect(230, 0, 100, 30, ILI9341_BLACK);      //battery %
     tft.fillRect(230, 220, 90, 240, ILI9341_BLACK);   //Accel
-    tft.fillRect(0, 180, 140, 230, ILI9341_BLACK);     //heigh & pressure 
+    tft.fillRect(0, 180, 140, 100, ILI9341_BLACK);     //heigh & pressure 
+    tft.pushImage(0, 0, 30, 30, SettingsIcon);
 
 
     tft.setCursor(70, 45);      //Hour
