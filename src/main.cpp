@@ -248,10 +248,10 @@ void ShowMenu()
     tft.startWrite();
     int BattColor;
     tft.fillRect(0, 0, 60, 34, ILI9341_BLACK);         //Hall
-    tft.fillRect(70, 40, 180, 75, ILI9341_BLACK);      //Hour
+    tft.fillRect(70, 40, 250, 75, ILI9341_BLACK);      //Hour
     tft.fillRect(230, 0, 100, 30, ILI9341_BLACK);      //battery %
-    tft.fillRect(230, 220, 90, 240, ILI9341_BLACK);   //Accel
-    tft.fillRect(0, 180, 140, 100, ILI9341_BLACK);     //heigh & pressure 
+    tft.fillRect(230, 220, 90, 20, ILI9341_BLACK);   //Accel
+    tft.fillRect(0, 180, 200, 60, ILI9341_BLACK);     //heigh & pressure 
     tft.pushImage(0, 0, 30, 30, SettingsIcon);
 
 
@@ -348,25 +348,22 @@ void ShowMenu()
     
     if (digitalRead(ChProcess))
     {
-
-    
       tft.setTextSize(2);        
       if(soc < 100)
       {
-      tft.setCursor(240, 3);
+        tft.setCursor(240, 3);
       }
       else
       {
         tft.setCursor(230, 3);
       }
+      tft.pushImage(280, 0, 37, 20, Battery);
       tft.print(soc);
       tft.println("%");
     }
     
     else
     {
-
-    
       tft.setTextSize(2);        
       if(soc < 100)
       {
@@ -376,12 +373,15 @@ void ShowMenu()
       {
         tft.setCursor(230, 3);
       }
+
       tft.print(soc);
       tft.println("%");
+      tft.pushImage(280, 0, 37, 20, BatteryCharging);
     }
-
-    tft.fillRect(282, 2, 31*soc/100, 16, BattColor);
-    delay(15);
+    int BatteryFill = 31*soc/100;
+    tft.fillRect(282, 2, BatteryFill, 16, BattColor);
+    tft.fillRect(BatteryFill+282, 2, 31-BatteryFill, 16, 0xFCCF00);
+    delay(10);
     tft.endWrite();
     
   }
