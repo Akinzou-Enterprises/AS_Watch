@@ -380,7 +380,7 @@ void ShowMenu()
     }
     int BatteryFill = 31*soc/100;
     tft.fillRect(282, 2, BatteryFill, 16, BattColor);
-    tft.fillRect(BatteryFill+282, 2, 31-BatteryFill, 16, 0xFCCF00);
+    tft.fillRect(BatteryFill+282, 2, 31-BatteryFill, 16, 0xFCAC00);
     delay(10);
     tft.endWrite();
     
@@ -393,7 +393,7 @@ void ShowSettings()
   {
 
     tft.fillRect(40, 40, 270, 170, ILI9341_BLACK);
-
+    tft.pushImage(0, 0, 30, 30, ReturnIcon);
     tft.setTextSize(2);        
     tft.setCursor(40, 40); 
     tft.print(HUMIDITY);
