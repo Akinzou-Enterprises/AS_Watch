@@ -15,7 +15,7 @@ ICM20602::ICM20602(bool Addr)
 
 void ICM20602::write8(byte reg, byte value) 
 {
-  Wire.beginTransmission((uint8_t)MAX31341Adress);
+  Wire.beginTransmission((uint8_t)Addr);
   Wire.write((uint8_t)reg);
   Wire.write((uint8_t)value);
   Wire.endTransmission();
@@ -24,10 +24,10 @@ void ICM20602::write8(byte reg, byte value)
 uint8_t ICM20602::read8(byte reg) 
 {
     uint8_t value;
-    Wire.beginTransmission((uint8_t)MAX31341Adress);
+    Wire.beginTransmission((uint8_t)Addr);
     Wire.write((uint8_t)reg);
     Wire.endTransmission(false);
-    Wire.requestFrom((uint8_t)MAX31341Adress, (byte)1);
+    Wire.requestFrom((uint8_t)Addr, (byte)1);
     value = Wire.read();
     return value;
 }
