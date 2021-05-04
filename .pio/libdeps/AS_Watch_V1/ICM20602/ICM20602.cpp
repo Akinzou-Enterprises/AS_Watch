@@ -13,6 +13,52 @@ ICM20602::ICM20602(bool Addr)
     }
 }
 
+void ICM20602::Restart()
+{
+    write8(PWR_MGMT_1, 0x80);
+}
+
+void::ICM20602::Init(CLKSEL CLK, bool EnableTemp, bool GryroStandby, bool Cycle)
+{
+    uint8_t ConfigToSend = 0b00000000;
+    switch (CLK)
+    {
+    case Internal20MHz:
+        ConfigToSend |= Internal20MHz;
+        break;
+    
+    case AutoSelect:
+        ConfigToSend |= AutoSelect;
+        break;
+
+    case StopClock:
+        ConfigToSend |= StopClock;
+    }
+
+    if(EnableTemp)
+    {
+        ConfigToSend |= 0x8;
+    }
+
+    if(GryroStandby)
+    {
+        ConfigToSend |= 0x10;
+    }
+
+    if(Cycle)
+    {
+        ConfigToSend |= 0x20;
+    }
+    
+    write8(PWR_MGMT_1, ConfigToSend);
+}
+
+
+
+
+
+
+
 void ICM20602::write8(byte reg, byte value) 
 {
   Wire.beginTransmission((uint8_t)Addr);

@@ -71,15 +71,24 @@ enum ICM20602_registers
  	ZA_OFFSET_L			=	0x7E,
 };
 
+enum CLKSEL
+{
+	Internal20MHz = 0b000,
+	AutoSelect = 0b001,
+	StopClock = 0b111,
+};
+
 class ICM20602
 {
-private:
-    uint8_t Addr;
-    void write8(byte reg, byte value) ;
-    uint8_t read8(byte reg);
-    
-public:
-    ICM20602(bool Addr); //True = 69, False = 68
+	private:
+		uint8_t Addr;
+		void write8(byte reg, byte value);
+		uint8_t read8(byte reg);
+		
+	public:
+		ICM20602(bool Addr); //True = 69, False = 68
+		void Restart();
+		void Init(CLKSEL CLK, bool EnableTemp, bool GryroStandby, bool Cycle); //True = temp sensor is enabled
 
 };
 
