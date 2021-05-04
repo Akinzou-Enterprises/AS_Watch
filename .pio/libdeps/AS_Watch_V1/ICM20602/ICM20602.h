@@ -86,9 +86,11 @@ class ICM20602
 		uint8_t read8(byte reg);
 		
 	public:
-		ICM20602(bool Addr); //True = 69, False = 68
+		ICM20602(bool Addr); //True when SA0 high (0x69), False when low (0x68)
 		void Restart();
 		void Init(CLKSEL CLK, bool EnableTemp, bool GryroStandby, bool Cycle); //True = temp sensor is enabled
+		void GyroStandby(bool On);
+		void Sleep(bool On);
 
 };
 

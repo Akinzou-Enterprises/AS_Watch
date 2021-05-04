@@ -54,9 +54,35 @@ void::ICM20602::Init(CLKSEL CLK, bool EnableTemp, bool GryroStandby, bool Cycle)
 }
 
 
+void ICM20602::GyroStandby(bool On)
+{
+    uint8_t ConfigToSend = read8(PWR_MGMT_1);
+    if(On)
+    {
+        ConfigToSend |= 0x10;
+    }
 
+    else
+    {
+        ConfigToSend &= ~(0x10);
+    }
+    write8(PWR_MGMT_1, ConfigToSend);
+}
 
-
+void ICM20602::Sleep(bool On)
+{
+    uint8_t ConfigToSend = read8(PWR_MGMT_1);
+    if(On)
+    {
+        ConfigToSend |= 0x40;
+    }
+    
+    else
+    {
+        ConfigToSend &= ~(0x40);
+    }
+    write8(PWR_MGMT_1, ConfigToSend);
+}
 
 
 void ICM20602::write8(byte reg, byte value) 
