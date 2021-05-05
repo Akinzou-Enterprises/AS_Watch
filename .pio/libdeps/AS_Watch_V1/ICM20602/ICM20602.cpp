@@ -69,6 +69,19 @@ void ICM20602::GyroStandby(bool On)
     write8(PWR_MGMT_1, ConfigToSend);
 }
 
+bool ICM20602::Test()
+{
+    if (read8(WHO_AM_I) == 0x12);
+    {
+        return true;
+    }
+    
+    else
+    {
+        return false;
+    }
+}
+
 void ICM20602::Sleep(bool On)
 {
     uint8_t ConfigToSend = read8(PWR_MGMT_1);
