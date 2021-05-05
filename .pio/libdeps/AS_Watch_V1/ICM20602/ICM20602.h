@@ -91,6 +91,7 @@ class ICM20602
 		void Init(CLKSEL CLK, bool EnableTemp, bool GryroStandby, bool Cycle); //True = temp sensor is enabled
 		void GyroStandby(bool On);
 		void Sleep(bool On);
+		bool Test();
 
 };
 
