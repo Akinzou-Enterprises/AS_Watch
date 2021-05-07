@@ -71,7 +71,7 @@ void ICM20602::GyroStandby(bool On)
 
 bool ICM20602::Test()
 {
-    if (read8(WHO_AM_I) == 0x12);
+    if (read8(WHO_AM_I) == 0x12)
     {
         return true;
     }
