@@ -83,7 +83,7 @@ class ICM20602
 	private:
 		uint8_t Addr;
 		void write8(byte reg, byte value);
-		uint8_t read8(byte reg);
+		
 		
 	public:
 		ICM20602(bool Addr); //True when SA0 high (0x69), False when low (0x68)
@@ -92,6 +92,7 @@ class ICM20602
 		void GyroStandby(bool On);
 		void Sleep(bool On);
 		bool Test();
+		uint8_t read8(byte reg);
 
 };
 
