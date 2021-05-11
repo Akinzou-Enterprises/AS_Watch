@@ -11,11 +11,13 @@ ICM20602::ICM20602(bool Addr)
     {
         Addr = 0x68;
     }
+    Wire.begin();
 }
 
 void ICM20602::Restart()
 {
     write8(PWR_MGMT_1, 0x80);
+    delay(10);
 }
 
 void::ICM20602::Init(CLKSEL CLK, bool EnableTemp, bool GryroStandby, bool Cycle)
