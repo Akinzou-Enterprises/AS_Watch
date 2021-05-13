@@ -92,6 +92,7 @@ class ICM20602
 		void GyroStandby(bool On);
 		void Sleep(bool On);
 		bool Test();
+		void SetupGyro();
 		uint8_t read8(byte reg);
 
 };
