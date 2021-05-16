@@ -101,6 +101,13 @@ void ICM20602::Sleep(bool On)
     write8(PWR_MGMT_1, ConfigToSend);
 }
 
+void ICM20602::GyroS(bool X, bool Y, bool Z)
+{
+    GyroX(X);
+    GyroY(Y);
+    GyroZ(Z);
+}
+
 void ICM20602::GyroX(bool On)
 {  
     uint8_t ConfigToSend = read8(PWR_MGMT_2);
@@ -112,6 +119,36 @@ void ICM20602::GyroX(bool On)
     else
     {
         ConfigToSend |= 4;
+    }
+    write8(PWR_MGMT_2, ConfigToSend);
+}
+
+void ICM20602::GyroY(bool On)
+{  
+    uint8_t ConfigToSend = read8(PWR_MGMT_2);
+    if(On)
+    {
+        ConfigToSend &= ~(2);
+    }
+
+    else
+    {
+        ConfigToSend |= 2;
+    }
+    write8(PWR_MGMT_2, ConfigToSend);
+}
+
+void ICM20602::GyroZ(bool On)
+{  
+    uint8_t ConfigToSend = read8(PWR_MGMT_2);
+    if(On)
+    {
+        ConfigToSend &= ~(1);
+    }
+
+    else
+    {
+        ConfigToSend |= 1;
     }
     write8(PWR_MGMT_2, ConfigToSend);
 }

@@ -85,13 +85,15 @@ class ICM20602
 		void write8(byte reg, byte value);
 		ICM20602(bool ADR); //True when SA0 high (0x69), False when low (0x68)
 		void Restart();
-		void Init(CLKSEL CLK, bool EnableTemp, bool GryroStandby, bool Cycle); //True = temp sensor is enabled
+		void Init(CLKSEL CLK, bool EnableTemp, bool GryroStandby, bool Cycle); //true = ON
 		void GyroStandby(bool On);
 		void Sleep(bool On);
 		bool Test();
-		void GyroX(bool On);
+		void GyroS(bool X, bool Y, bool Z); //true = ON
+		void GyroX(bool On); //true = ON
+		void GyroY(bool On); //true = ON
+		void GyroZ(bool On); //true = ON
 		uint8_t read8(byte reg);
-
 };
 
 
