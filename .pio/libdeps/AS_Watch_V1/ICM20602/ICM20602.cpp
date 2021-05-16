@@ -1,8 +1,11 @@
 #include <ICM20602.h>
+#include <Wire.h>
 
-ICM20602::ICM20602(bool Addr)
+ICM20602::ICM20602(bool ADR)
 { 
-    if(Addr)
+    Wire.begin();
+
+    if(ADR)
     {
         Addr = 0x69;
     }
@@ -11,7 +14,6 @@ ICM20602::ICM20602(bool Addr)
     {
         Addr = 0x68;
     }
-    Wire.begin();
 }
 
 void ICM20602::Restart()
@@ -99,6 +101,20 @@ void ICM20602::Sleep(bool On)
     write8(PWR_MGMT_1, ConfigToSend);
 }
 
+void ICM20602::GyroX(bool On)
+{  
+    uint8_t ConfigToSend = read8(PWR_MGMT_2);
+    if(On)
+    {
+        ConfigToSend &= ~(4);
+    }
+
+    else
+    {
+        ConfigToSend |= 4;
+    }
+    write8(PWR_MGMT_2, ConfigToSend);
+}
 
 void ICM20602::write8(byte reg, byte value) 
 {

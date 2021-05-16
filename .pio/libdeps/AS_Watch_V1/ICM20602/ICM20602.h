@@ -79,20 +79,17 @@ enum CLKSEL
 };
 
 class ICM20602
-{
-	private:
+{		
+	public:
 		uint8_t Addr;
 		void write8(byte reg, byte value);
-		
-		
-	public:
-		ICM20602(bool Addr); //True when SA0 high (0x69), False when low (0x68)
+		ICM20602(bool ADR); //True when SA0 high (0x69), False when low (0x68)
 		void Restart();
 		void Init(CLKSEL CLK, bool EnableTemp, bool GryroStandby, bool Cycle); //True = temp sensor is enabled
 		void GyroStandby(bool On);
 		void Sleep(bool On);
 		bool Test();
-		void SetupGyro();
+		void GyroX(bool On);
 		uint8_t read8(byte reg);
 
 };
