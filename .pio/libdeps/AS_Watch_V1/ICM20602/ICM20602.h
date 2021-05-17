@@ -93,6 +93,7 @@ class ICM20602
 		void GyroX(bool On); //true = ON
 		void GyroY(bool On); //true = ON
 		void GyroZ(bool On); //true = ON
+		void AccelX(bool On);
 		uint8_t read8(byte reg);
 };
 

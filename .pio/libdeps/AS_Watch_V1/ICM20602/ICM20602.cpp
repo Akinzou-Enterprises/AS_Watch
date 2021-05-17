@@ -153,6 +153,11 @@ void ICM20602::GyroZ(bool On)
     write8(PWR_MGMT_2, ConfigToSend);
 }
 
+void ICM20602::AccelX(bool On)
+{
+    
+}
+
 void ICM20602::write8(byte reg, byte value) 
 {
   Wire.beginTransmission((uint8_t)Addr);
