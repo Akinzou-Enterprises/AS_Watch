@@ -153,9 +153,59 @@ void ICM20602::GyroZ(bool On)
     write8(PWR_MGMT_2, ConfigToSend);
 }
 
+void ICM20602::AccelS(bool X, bool Y, bool Z)
+{
+    AccelX(X);
+    AccelY(Y);
+    AccelZ(Z);
+}
+
+void ICM20602::AccelZ(bool On)
+{
+    uint8_t ConfigToSend = read8(PWR_MGMT_2);
+
+    if(On)
+    {
+        ConfigToSend &= ~(8);
+    }
+
+    else
+    {
+        ConfigToSend |= 8;
+    }
+    write8(PWR_MGMT_2, ConfigToSend);
+}
+
+void ICM20602::AccelY(bool On)
+{
+    uint8_t ConfigToSend = read8(PWR_MGMT_2);
+
+    if(On)
+    {
+        ConfigToSend &= ~(16);
+    }
+
+    else
+    {
+        ConfigToSend |= 16;
+    }
+    write8(PWR_MGMT_2, ConfigToSend);
+}
+
 void ICM20602::AccelX(bool On)
 {
-    
+    uint8_t ConfigToSend = read8(PWR_MGMT_2);
+
+    if(On)
+    {
+        ConfigToSend &= ~(32);
+    }
+
+    else
+    {
+        ConfigToSend |= 32;
+    }
+    write8(PWR_MGMT_2, ConfigToSend);
 }
 
 void ICM20602::write8(byte reg, byte value) 
