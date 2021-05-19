@@ -208,6 +208,45 @@ void ICM20602::AccelX(bool On)
     write8(PWR_MGMT_2, ConfigToSend);
 }
 
+
+int ICM20602::ReadAccelX()
+{
+    return ReturnData(read8(ACCEL_XOUT_H), read8(ACCEL_XOUT_L));
+}
+
+int ICM20602::ReadAccelY()
+{
+    return ReturnData(read8(ACCEL_YOUT_H), read8(ACCEL_YOUT_L));
+}
+
+int ICM20602::ReadAccelZ()
+{
+    return ReturnData(read8(ACCEL_ZOUT_H), read8(ACCEL_ZOUT_L));
+}
+
+int ICM20602::ReadGyroX()
+{
+    return ReturnData(read8(GYRO_XOUT_H), read8(GYRO_XOUT_L));
+}
+
+int ICM20602::ReadGyroY()
+{
+    return ReturnData(read8(GYRO_YOUT_H), read8(GYRO_YOUT_L));
+}
+
+int ICM20602::ReadGyroZ()
+{
+    return ReturnData(read8(GYRO_ZOUT_H), read8(GYRO_ZOUT_L));
+}
+
+
+int ICM20602::ReturnData(uint8_t RegH, uint8_t RegL)
+{  
+    uint16_t Data = RegH << 8;
+    Data |= RegL;
+    return Data;
+}
+
 void ICM20602::write8(byte reg, byte value) 
 {
   Wire.beginTransmission((uint8_t)Addr);

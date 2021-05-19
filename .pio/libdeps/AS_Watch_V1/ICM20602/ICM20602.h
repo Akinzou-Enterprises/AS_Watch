@@ -97,6 +97,13 @@ class ICM20602
 		void AccelY(bool On);
 		void AccelZ(bool On);
 		void AccelS(bool X, bool Y, bool Z);
+		int ReturnData(uint8_t RegH, uint8_t RegL);
+		int ReadAccelX();
+		int ReadAccelY();
+		int ReadAccelZ();
+		int ReadGyroX();
+		int ReadGyroY();
+		int ReadGyroZ();
 		uint8_t read8(byte reg);
 };
 
