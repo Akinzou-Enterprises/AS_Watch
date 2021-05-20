@@ -15,7 +15,7 @@
 #include <TFT_eSPI.h>
 
 
-#define AOSversion "Alpha_0v1"
+#define AOSversion "Alpha_0v2"
 String Command = "";
 
 TFT_eSPI tft = TFT_eSPI();
