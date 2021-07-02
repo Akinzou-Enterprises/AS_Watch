@@ -101,6 +101,11 @@ void ICM20602::Sleep(bool On)
     write8(PWR_MGMT_1, ConfigToSend);
 }
 
+void ICM20602::GyroPrecision(GyroPrec dps)
+{
+    write8(GYRO_CONFIG, dps<<2);
+}
+
 void ICM20602::GyroS(bool X, bool Y, bool Z)
 {
     GyroX(X);
@@ -151,6 +156,11 @@ void ICM20602::GyroZ(bool On)
         ConfigToSend |= 1;
     }
     write8(PWR_MGMT_2, ConfigToSend);
+}
+
+void ICM20602::AccelPrecision(AccelPrec g)
+{
+    write8(GYRO_CONFIG, g<<2);
 }
 
 void ICM20602::AccelS(bool X, bool Y, bool Z)
