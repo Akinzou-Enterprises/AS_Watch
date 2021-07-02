@@ -121,6 +121,10 @@ class ICM20602
 		int ReadGyroX();
 		int ReadGyroY();
 		int ReadGyroZ();
+		int ReadAngleX();
+		void SetOffsetGyroX(int offset);
+		void SetOffsetGyroY(int offset);
+		void SetOffsetGyroZ(int offset);
 		void GyroPrecision(GyroPrec dps);
 		void AccelPrecision(AccelPrec g);
 		uint8_t read8(byte reg);
