@@ -14,7 +14,7 @@ const uint8_t SOFT_MISO_PIN = 19;
 const uint8_t SOFT_MOSI_PIN = 23;
 const uint8_t SOFT_SCK_PIN  = 18;
 
-
+const static bool ICMaddr = true;
 
 
 #define SD_FAT_TYPE 1
