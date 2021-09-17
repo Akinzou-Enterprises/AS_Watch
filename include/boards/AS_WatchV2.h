@@ -1,0 +1,34 @@
+// BME280:     0x76: connected to GND,       0x77: connected to VDDIO
+// MAX31341:   The address is 1101 001 (left justified with LSB set to 0).
+//ICM-20600:   1101 000 (SA0 = LOW) 1101 001 (SA0 = HIGH)
+//MAX17055:    0x6C
+
+//Go to .platformio\packages\framework-arduinoespressif32\variants\esp32, open pins_arduino.h and change MOSI, MISO, SCK to: 
+
+//static const uint8_t MOSI  = 13;
+//static const uint8_t MISO  = 17;
+//static const uint8_t SCK   = 14;
+//static const uint8_t SS    = 33;
+
+const uint8_t SD_CS_PIN = 5;
+const uint8_t SOFT_MISO_PIN = 19;
+const uint8_t SOFT_MOSI_PIN = 23;
+const uint8_t SOFT_SCK_PIN  = 18;
+
+const static bool ICMaddr = false;
+
+
+#define SD_FAT_TYPE 1
+#define SD_CONFIG SdSpiConfig(SD_CS_PIN, DEDICATED_SPI, SD_SCK_MHZ(10), &softSpi)
+#define LCD_Switch 32
+#define PanicButton 39
+#define ChProcess 36
+#define IR_PIN 16
+#define MaxCharsOnPage 331
+
+#define XP 15
+#define XM 25
+#define YP 2
+#define YM 26
+
+#define SPIspeed 40000000L
