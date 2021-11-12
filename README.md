@@ -1,6 +1,5 @@
 # AS_Watch
 
-# Changing lib to TFTeSPI!
 
 ### Go to .platformio\packages\framework-arduinoespressif32\variants\esp32, open pins_arduino.h and change MOSI, MISO, SCK to:
 ### static const uint8_t MOSI = 13;
